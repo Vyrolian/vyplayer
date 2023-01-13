@@ -1,0 +1,17 @@
+.volume-control {
+  position: relative;
+}
+
+.volume-control input[type="range"] {
+  width: 100%;
+}
+
+.volume-control .progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #ccc;
+  width: 0;
+  transition: width 0.2s linear;
+}

@@ -1,0 +1,12 @@
+.progress-bar {
+  width: 30%;
+  height: 10px;
+  background-color: #ddd;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  background-color: #888;
+}

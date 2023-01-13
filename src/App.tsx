@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useRef, useState } from "react";
+import testmp3 from "./test.mp3";
+import { Provider, useSelector } from "react-redux";
+import audioReducer from "./reducers/audio/audio";
+
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import AudioPlayer from "./components/audio/AudioPlayer";
+import { AppState } from "../types/AppState";
+
+const rootReducer = combineReducers({
+  audio: audioReducer,
+});
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 function App() {
+  const [file, setFile] = useState<File | null>(null);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files?.[0]);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <input type="file" onChange={handleChange} />
+      <AudioPlayer file={file} />
+    </Provider>
   );
 }
 
