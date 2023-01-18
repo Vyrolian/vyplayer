@@ -6,6 +6,7 @@ export type AppState = {
 };
 export type AudioState = {
   isPlaying: boolean;
+  currentSong: File | null;
   currentTrack: Track;
   progress: number;
   volume: number;

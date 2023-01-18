@@ -1,13 +1,13 @@
 export type PlayAction = {
-  type: 'PLAY';
+  type: "PLAY";
 };
 
 export type PauseAction = {
-  type: 'PAUSE';
+  type: "PAUSE";
 };
 
 export type SkipAction = {
-  type: 'SKIP';
+  type: "SKIP";
 };
 
 export type AudioAction = PlayAction | PauseAction | SkipAction;

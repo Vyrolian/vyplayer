@@ -5,8 +5,12 @@ import {
   UpdateSongProgressAction,
 } from "../../../types/audio/UpdateSongProgressAction";
 import { SetVolumeAction } from "../../../types/audio/SetVolumeAction";
+import { SetCurrentSong } from "../../../types/audio/SetCurrentSong";
 const initialState: AudioState = {
   isPlaying: false,
+  progress: 0,
+  volume: 0.2,
+  currentSong: null,
   currentTrack: {
     id: "",
     title: "",
@@ -14,15 +18,8 @@ const initialState: AudioState = {
     duration: 0,
     file: "",
   },
-  progress: 0,
-  volume: 0.2,
 };
-type UpdateVolumeAction = {
-  type: "UPDATE_VOLUME";
-  payload: {
-    volume: number;
-  };
-};
+
 export default (
   state: AudioState = initialState,
   action:
@@ -30,7 +27,7 @@ export default (
     | UpdateSongProgressAction
     | SetVolumeAction
     | ResetSongProgressAction
-    | UpdateVolumeAction
+    | SetCurrentSong
 ) => {
   switch (action.type) {
     case "PLAY":
@@ -59,10 +56,10 @@ export default (
         ...state,
         progress: action.payload.progress,
       };
-    case "UPDATE_VOLUME":
+    case "SET_CURRENT_SONG":
       return {
         ...state,
-        volume: action.payload.volume,
+        currentSong: action.payload.currentSong,
       };
     // Other cases go here
     default:

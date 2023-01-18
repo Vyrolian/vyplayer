@@ -1,7 +1,6 @@
 export interface SetVolumeAction {
-    type: 'SET_VOLUME';
-    payload: {
-      volume: number;
-    };
-  }
-  
+  type: "SET_VOLUME";
+  payload: {
+    volume: number;
+  };
+}
