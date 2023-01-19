@@ -7,7 +7,8 @@ import AudioPlayer from "./components/audio/AudioPlayer";
 import { AppState } from "../types/AppState";
 import Playlist from "./components/playlist/Playlist";
 
-const { remote } = window.require("electron");
+const electron = window.require("electron");
+const ipcRenderer = window.require("electron");
 const rootReducer = combineReducers({
   audio: audioReducer,
 });
@@ -16,18 +17,14 @@ const store = configureStore({
 });
 
 function App() {
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  if (navigator.userAgent.indexOf("Electron") > -1) {
+    console.log("Running in an Electron app!");
+  } else {
+    console.log("Not running in an Electron app.");
+  }
+
   const handleSelectFiles = () => {
-    remote.dialog.showOpenDialog(
-      {
-        properties: ["openFile", "multiSelections"],
-      },
-      (filePaths: any) => {
-        if (filePaths) {
-          setSelectedFiles(filePaths);
-        }
-      }
-    );
+    ipcRenderer.send("dialog");
   };
 
   const [file, setFile] = useState<File | null>(null);
