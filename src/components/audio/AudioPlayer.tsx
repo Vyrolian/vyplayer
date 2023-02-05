@@ -29,14 +29,11 @@ function AudioPlayer({ file, play, volume }: AudioPlayerProps) {
   ) as HTMLAudioElement;
 
   useEffect(() => {
-    if (!audioElement) return;
     if (file) {
       audioElement.src = URL.createObjectURL(file);
       audioElement.volume = defaultVolume;
       audioElement.play();
       play();
-    } else {
-      audioElement.src = ""; // Set the src to an empty string
     }
   }, [file]);
 

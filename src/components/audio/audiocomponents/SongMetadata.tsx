@@ -10,7 +10,7 @@ function SongMetadata({ file }: SongMetadata) {
     if (file) {
       jsmediatags.read(file, {
         onSuccess: (metadata: TagType) => {
-          console.log(metadata.tags.artist);
+          //   console.log(metadata.tags.artist);
           if (metadata) {
           }
 
