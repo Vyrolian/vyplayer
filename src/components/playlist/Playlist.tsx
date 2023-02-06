@@ -6,7 +6,7 @@ import { SetCurrentSong } from "../../../types/audio/SetCurrentSong";
 import { setCurrentSong } from "../../actions/audio/setCurrentSong";
 type Data = {
   filePaths: string[];
-  songs: Tags;
+  songs: any;
 };
 var jsmediatags = window.jsmediatags;
 type Playlist = {
@@ -19,8 +19,20 @@ function Playlist({ data }: Playlist) {
   function handleSelectSong(p: string) {
     window.electronAPI.send("path-selected", p);
   }
-  console.log(data.songs);
-  return <div></div>;
+
+  return (
+    <div>
+      {data.songs && data.songs.length > 0 ? (
+        data.songs.map((song: any, index: any) => (
+          <button onClick={() => handleSelectSong(data.filePaths[index])}>
+            {song.songData.artist}-{song.songData.title}
+          </button>
+        ))
+      ) : (
+        <p>No songs found</p>
+      )}
+    </div>
+  );
 }
 const mapDispatchToProps = {
   setCurrentSong,
