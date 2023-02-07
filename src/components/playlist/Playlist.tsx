@@ -6,7 +6,7 @@ import { SetCurrentSong } from "../../../types/audio/SetCurrentSong";
 import { setCurrentSong } from "../../actions/audio/setCurrentSong";
 type Data = {
   filePaths: string[];
-  songs: any;
+  songs: { songData: ShortcutTags }[];
 };
 var jsmediatags = window.jsmediatags;
 type Playlist = {
@@ -23,7 +23,7 @@ function Playlist({ data }: Playlist) {
   return (
     <div>
       {data.songs && data.songs.length > 0 ? (
-        data.songs.map((song: any, index: any) => (
+        data.songs.map((song: { songData: ShortcutTags }, index: any) => (
           <button onClick={() => handleSelectSong(data.filePaths[index])}>
             {song.songData.artist}-{song.songData.title}
           </button>

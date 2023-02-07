@@ -7,7 +7,7 @@ import AudioPlayer from "./components/audio/AudioPlayer";
 import { AppState } from "../types/AppState";
 import Playlist from "./components/playlist/Playlist";
 import { IElectronAPI } from "./renderer";
-import { Tags } from "jsmediatags/types";
+import { ShortcutTags, Tags } from "jsmediatags/types";
 const rootReducer = combineReducers({
   audio: audioReducer,
 });
@@ -19,7 +19,7 @@ const handleSelectFiles = () => {
 };
 type Data = {
   filePaths: string[];
-  songs: Tags;
+  songs: { songData: ShortcutTags }[];
 };
 function App() {
   if (navigator.userAgent.indexOf("Electron") > -1) {
@@ -27,7 +27,7 @@ function App() {
   } else {
     console.log("Not running in an Electron app.");
   }
-  const [data, setData] = useState<Data>({ filePaths: [], songs: {} });
+  const [data, setData] = useState<Data>({ filePaths: [], songs: [] });
 
   const [file1, setFile1] = useState<File | null>(null);
 
