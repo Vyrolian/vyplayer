@@ -10,6 +10,7 @@ import { setVolume } from "../../actions/audio/SetVolume";
 import { AppState } from "../../../types/AppState";
 import { Data } from "../../../types/songMetadata";
 import { setUseProxies } from "immer";
+import { set } from "immer/dist/internal";
 
 //import test from "./test.mp3";
 type AudioPlayerProps = {
@@ -35,37 +36,35 @@ function AudioPlayer({
   } else {
     defaultVolume = 0.1;
   }
-
-  const [sound, setSound] = useState<Howl>();
-  const [cleared, setCleared] = useState<boolean>();
-  console.log(volume);
-
+  const audioElement = document.getElementById(
+    "audio-element"
+  ) as HTMLAudioElement;
+  const [sound, setSound] = useState<Howl | undefined>(undefined);
+  var durationUpdater;
   useEffect(() => {
-    if (sound != undefined) {
-      sound.play();
-      sound.stop(0);
-      sound.unload();
-      setSound(undefined);
-      pause();
-    }
     if (currentSong) {
-      const src = `media-loader://${currentSong}`;
+      audioElement.src = `media-loader://C:test.flac`;
+      audioElement.volume = defaultVolume;
+      audioElement.play();
+      console.log(audioElement);
       const newSound = new Howl({
-        src: [src, src],
+        src: [``],
         html5: true,
-
-        onload: function () {
-          console.log("Sound has loaded!");
-        },
+        onplay: function () {},
       });
+      if (sound) {
+        sound.play();
+        sound.stop();
+        sound.unload();
+      }
       setSound(newSound);
-      newSound.volume(defaultVolume);
-      play();
-      newSound.pause();
-      newSound.unload();
-    }
-  }, [currentSong]);
 
+      play();
+    } else {
+      setSound(undefined);
+    }
+    sound?.unload();
+  }, [currentSong]);
   return (
     <div className="audio-player">
       <audio id="audio-element" />

@@ -18,25 +18,16 @@ function PlayPauseButton({
   sound,
 }: PlayPauseButtonProps) {
   const dispatch = useDispatch();
-  const updateProgress = () => {
-    if (sound) {
-      const progress = (sound.seek() / sound.duration()) * 100;
-      dispatch(updateSongProgress(progress));
-    }
-    console.log(sound);
-  };
 
   let progressInterval: any;
   useEffect(() => {
     if (!sound) return;
+
     if (isPlaying) {
-      sound.play();
-      setInterval(updateProgress, 100);
     } else {
       sound.pause();
-      setInterval(updateProgress, 100);
     }
-  }, [isPlaying, sound]);
+  }, [isPlaying]);
 
   const handleClick = () => {
     if (isPlaying) {
