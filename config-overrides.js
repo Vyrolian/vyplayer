@@ -1,5 +1,5 @@
 module.exports = function override(config, env) {
-  config.target = "electron-renderer";
+  config.target = "web";
 
   return config;
 };

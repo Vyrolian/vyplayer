@@ -3,20 +3,31 @@ import PlayPauseButton from "./audiocomponents/PlayPauseButton";
 import ProgressBar from "./audiocomponents/ProgressBar";
 import VolumeControl from "./audiocomponents/VolumeControl";
 import SongMetadata from "./audiocomponents/SongMetadata";
-import { play } from "../../actions/audio/audio";
-import Howler, { Howl } from "howler";
-import { connect } from "react-redux";
+import { pause, play } from "../../actions/audio/audio";
+import { Howl, Howler } from "howler";
+import { connect, useSelector } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
 import { AppState } from "../../../types/AppState";
-import test from "./test.mp3";
+import { Data } from "../../../types/songMetadata";
+import { setUseProxies } from "immer";
+
+//import test from "./test.mp3";
 type AudioPlayerProps = {
-  file: Blob | null;
   play: typeof play;
+  pause: typeof pause;
   setVolume: typeof setVolume;
   volume: number;
+  data: Data;
+  currentSong: string;
 };
 
-function AudioPlayer({ file, play, volume }: AudioPlayerProps) {
+function AudioPlayer({
+  data,
+  play,
+  pause,
+  currentSong,
+  volume,
+}: AudioPlayerProps) {
   const storedVolume = localStorage.getItem("volume");
   let defaultVolume: number;
   if (storedVolume) {
@@ -24,43 +35,52 @@ function AudioPlayer({ file, play, volume }: AudioPlayerProps) {
   } else {
     defaultVolume = 0.1;
   }
-  const audioElement = document.getElementById(
-    "audio-element"
-  ) as HTMLAudioElement;
+
+  const [sound, setSound] = useState<Howl>();
+  const [cleared, setCleared] = useState<boolean>();
+  console.log(volume);
 
   useEffect(() => {
-    if (file) {
-      const streamUrl = URL.createObjectURL(file);
-      console.log(streamUrl + "assdick");
-      const sound = new Howl({
-        src: [test],
+    if (sound != undefined) {
+      sound.play();
+      sound.stop(0);
+      sound.unload();
+      setSound(undefined);
+      pause();
+    }
+    if (currentSong) {
+      const src = `media-loader://${currentSong}`;
+      const newSound = new Howl({
+        src: [src, src],
         html5: true,
-        autoplay: true,
+
         onload: function () {
           console.log("Sound has loaded!");
         },
       });
-      sound.volume(defaultVolume);
-      sound.play();
+      setSound(newSound);
+      newSound.volume(defaultVolume);
       play();
+      newSound.pause();
+      newSound.unload();
     }
-  }, [file]);
+  }, [currentSong]);
 
   return (
     <div className="audio-player">
       <audio id="audio-element" />
-      <PlayPauseButton audioElement={audioElement} />
-      <ProgressBar />
+      <PlayPauseButton sound={sound} />
+      <ProgressBar sound={sound} />
       <VolumeControl defaultValue={defaultVolume} />
-      <SongMetadata file={file} />
     </div>
   );
 }
 
-const mapDispatchToProps = { play, setVolume };
+const mapDispatchToProps = { play, pause, setVolume };
 function mapStateToProps(state: AppState) {
   return {
     volume: state.audio.volume,
+    currentSong: state.audio.currentSong,
   };
 }
 

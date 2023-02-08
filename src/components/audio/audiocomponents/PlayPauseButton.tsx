@@ -4,35 +4,39 @@ import { AppState } from "../../../../types/AppState";
 import { play, pause } from "../../../actions/audio/audio";
 import "./PlayPauseButton.css";
 import { updateSongProgress } from "../../../actions/audio/updateSongProgress";
+import { Howl } from "howler";
 type PlayPauseButtonProps = {
   isPlaying: boolean;
   play: typeof play;
   pause: typeof pause;
-  audioElement: HTMLAudioElement;
+  sound: Howl | undefined;
 };
 function PlayPauseButton({
   isPlaying,
   play,
   pause,
-  audioElement,
+  sound,
 }: PlayPauseButtonProps) {
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (!audioElement) return;
-    if (isPlaying) {
-      audioElement.play();
-    } else {
-      audioElement.pause();
-    }
-
-    const updateProgress = () => {
-      const progress = (audioElement.currentTime / audioElement.duration) * 100;
-
+  const updateProgress = () => {
+    if (sound) {
+      const progress = (sound.seek() / sound.duration()) * 100;
       dispatch(updateSongProgress(progress));
-    };
-    audioElement.addEventListener("timeupdate", updateProgress);
-    return () => audioElement.removeEventListener("timeupdate", updateProgress);
-  }, [isPlaying, dispatch, audioElement]);
+    }
+    console.log(sound);
+  };
+
+  let progressInterval: any;
+  useEffect(() => {
+    if (!sound) return;
+    if (isPlaying) {
+      sound.play();
+      setInterval(updateProgress, 100);
+    } else {
+      sound.pause();
+      setInterval(updateProgress, 100);
+    }
+  }, [isPlaying, sound]);
 
   const handleClick = () => {
     if (isPlaying) {

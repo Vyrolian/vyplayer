@@ -3,10 +3,11 @@ export type AppState = {
   playlist: PlaylistState;
   volume: AudioState;
   progress: AudioState;
+  currentSong: AudioState;
 };
 export type AudioState = {
   isPlaying: boolean;
-  currentSong: File | null;
+  currentSong: string;
   currentTrack: Track;
   progress: number;
   volume: number;

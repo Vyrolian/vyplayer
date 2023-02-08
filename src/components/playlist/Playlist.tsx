@@ -1,14 +1,10 @@
 import { NoInfer } from "@reduxjs/toolkit/dist/tsHelpers";
 import { ShortcutTags, Tags, TagType } from "jsmediatags/types";
 import React, { useState } from "react";
-import { connect } from "react-redux";
-import { SetCurrentSong } from "../../../types/audio/SetCurrentSong";
+import { connect, useDispatch } from "react-redux";
 import { setCurrentSong } from "../../actions/audio/setCurrentSong";
-type Data = {
-  filePaths: string[];
-  songs: { songData: ShortcutTags }[];
-};
-var jsmediatags = window.jsmediatags;
+import { Data } from "../../../types/songMetadata";
+
 type Playlist = {
   data: Data;
 };
@@ -16,8 +12,11 @@ type file = {
   file: File | null;
 };
 function Playlist({ data }: Playlist) {
+  const dispatch = useDispatch();
   function handleSelectSong(p: string) {
     window.electronAPI.send("path-selected", p);
+
+    dispatch(setCurrentSong(p));
   }
   console.log(data.filePaths[0]);
   return (
@@ -37,4 +36,5 @@ function Playlist({ data }: Playlist) {
 const mapDispatchToProps = {
   setCurrentSong,
 };
+
 export default connect(null, mapDispatchToProps)(Playlist);

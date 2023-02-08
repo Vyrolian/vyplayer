@@ -35,14 +35,6 @@ function App() {
     window.electronAPI.showOpenDialog();
     window.electronAPI.on("on-file-select", (data: any) => {
       // console.log(data);
-
-      const blob = new Blob([data]);
-      const file = new File([blob], "audio.mp3");
-      const buf = [];
-      buf.push(blob);
-      const streamUrl = URL.createObjectURL(file);
-      console.log(streamUrl);
-      setFile1(blob);
     });
 
     window.electronAPI.on("select-path", (data: Data) => {
@@ -55,7 +47,7 @@ function App() {
     <Provider store={store}>
       <button onClick={handleOpenFile}>ass</button>
 
-      <AudioPlayer file={file1} />
+      <AudioPlayer data={data} />
       <Playlist data={data} />
     </Provider>
   );

@@ -10,7 +10,7 @@ const initialState: AudioState = {
   isPlaying: false,
   progress: 0,
   volume: 0.2,
-  currentSong: null,
+  currentSong: "",
   currentTrack: {
     id: "",
     title: "",
@@ -42,6 +42,7 @@ export default (
       };
 
     case "UPDATE_SONG_PROGRESS":
+      //   console.log(action.payload.progress);
       return {
         ...state,
         progress: action.payload.progress,
@@ -57,6 +58,7 @@ export default (
         progress: action.payload.progress,
       };
     case "SET_CURRENT_SONG":
+      console.log("Current song: ", action.payload.currentSong);
       return {
         ...state,
         currentSong: action.payload.currentSong,

@@ -128,25 +128,31 @@ const createWindow = (): void => {
     stream.on("data", (chunk) => {
       event.reply("on-file-select", chunk);
       currentChunk += chunkSize;
-      stream = fs.createReadStream(path, {
-        start: currentChunk,
-        end: currentChunk + chunkSize - 1,
+
+      const sound = new Howl({
+        src: ["./test.mp3"],
+        html5: true,
+        autoplay: true,
+        onload: function () {
+          console.log("Sound has loaded!");
+        },
       });
+
+      sound.play();
     });
   });
 
   app.whenReady().then(() => {
-    protocol.registerFileProtocol("myapp", (request, callback) => {
-      const url = request.url.substr(7);
-      callback({ path: path.normalize(`C:/Download/Musec/${url}`) });
+    // Create custom protocol for local media loading
+    protocol.registerFileProtocol("media-loader", (request, callback) => {
+      const url = request.url.replace("media-loader://", "");
+
+      try {
+        return callback(url);
+      } catch (err) {
+        return console.log("ass");
+      }
     });
-  });
-  fs.readdir("myapp:///", (err, files) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log(files);
-    }
   });
   // and load the index.html of the app.
   mainWindow.loadURL("http://localhost:3006");
