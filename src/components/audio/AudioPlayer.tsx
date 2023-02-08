@@ -4,13 +4,13 @@ import ProgressBar from "./audiocomponents/ProgressBar";
 import VolumeControl from "./audiocomponents/VolumeControl";
 import SongMetadata from "./audiocomponents/SongMetadata";
 import { play } from "../../actions/audio/audio";
-
+import Howler, { Howl } from "howler";
 import { connect } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
 import { AppState } from "../../../types/AppState";
-
+import test from "./test.mp3";
 type AudioPlayerProps = {
-  file: File | null;
+  file: Blob | null;
   play: typeof play;
   setVolume: typeof setVolume;
   volume: number;
@@ -30,9 +30,18 @@ function AudioPlayer({ file, play, volume }: AudioPlayerProps) {
 
   useEffect(() => {
     if (file) {
-      audioElement.src = URL.createObjectURL(file);
-      audioElement.volume = defaultVolume;
-      audioElement.play();
+      const streamUrl = URL.createObjectURL(file);
+      console.log(streamUrl + "assdick");
+      const sound = new Howl({
+        src: [test],
+        html5: true,
+        autoplay: true,
+        onload: function () {
+          console.log("Sound has loaded!");
+        },
+      });
+      sound.volume(defaultVolume);
+      sound.play();
       play();
     }
   }, [file]);

@@ -19,7 +19,7 @@ function Playlist({ data }: Playlist) {
   function handleSelectSong(p: string) {
     window.electronAPI.send("path-selected", p);
   }
-
+  console.log(data.filePaths[0]);
   return (
     <div>
       {data.songs && data.songs.length > 0 ? (

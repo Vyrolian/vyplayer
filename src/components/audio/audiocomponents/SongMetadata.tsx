@@ -2,7 +2,7 @@ import { ShortcutTags, TagType } from "jsmediatags/types";
 import React, { useEffect, useState } from "react";
 var jsmediatags = window.jsmediatags;
 type SongMetadata = {
-  file: File | null;
+  file: Blob | null;
 };
 function SongMetadata({ file }: SongMetadata) {
   const [metadata, setMetadata] = useState<ShortcutTags>();

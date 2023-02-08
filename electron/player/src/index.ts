@@ -4,6 +4,7 @@ import {
   dialog,
   ipcMain,
   OpenDialogOptions,
+  protocol,
 } from "electron";
 import fs, { createReadStream } from "fs";
 import http from "http";
@@ -42,7 +43,7 @@ const createWindow = (): void => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
 
-      nodeIntegration: true,
+      nodeIntegration: false,
     },
   });
   /*ipcMain.handle("dialog:openFile", async (event) => {
@@ -117,22 +118,36 @@ const createWindow = (): void => {
 
   ipcMain.on("path-selected", (event, path) => {
     console.log(path + "123");
-    // do something with the path
-    fs.readFile(path, (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      const buffer = Buffer.from(data);
-      const blob = new Blob([buffer]);
-      const file = new File([blob], "audio.mp3");
-      const url = URL.createObjectURL(file);
-      console.log(url);
-      event.reply("on-file-select", buffer);
+    const chunkSize = 1024 * 1024; // 1 MB in bytes
+    let currentChunk = 0;
+    let stream = fs.createReadStream(path, {
+      start: currentChunk,
+      end: chunkSize - 1,
+    });
+
+    stream.on("data", (chunk) => {
+      event.reply("on-file-select", chunk);
+      currentChunk += chunkSize;
+      stream = fs.createReadStream(path, {
+        start: currentChunk,
+        end: currentChunk + chunkSize - 1,
+      });
     });
   });
 
-  app.whenReady();
+  app.whenReady().then(() => {
+    protocol.registerFileProtocol("myapp", (request, callback) => {
+      const url = request.url.substr(7);
+      callback({ path: path.normalize(`C:/Download/Musec/${url}`) });
+    });
+  });
+  fs.readdir("myapp:///", (err, files) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(files);
+    }
+  });
   // and load the index.html of the app.
   mainWindow.loadURL("http://localhost:3006");
 

@@ -29,14 +29,20 @@ function App() {
   }
   const [data, setData] = useState<Data>({ filePaths: [], songs: [] });
 
-  const [file1, setFile1] = useState<File | null>(null);
+  const [file1, setFile1] = useState<Blob | null>(null);
 
   function handleOpenFile() {
     window.electronAPI.showOpenDialog();
     window.electronAPI.on("on-file-select", (data: any) => {
+      // console.log(data);
+
       const blob = new Blob([data]);
       const file = new File([blob], "audio.mp3");
-      setFile1(file);
+      const buf = [];
+      buf.push(blob);
+      const streamUrl = URL.createObjectURL(file);
+      console.log(streamUrl);
+      setFile1(blob);
     });
 
     window.electronAPI.on("select-path", (data: Data) => {
