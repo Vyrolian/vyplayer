@@ -4,3 +4,9 @@ export interface SetCurrentSong {
     currentSong: string;
   };
 }
+export interface SetNextSong {
+  type: "SET_NEXT_SONG";
+  payload: {
+    nextSong: string;
+  };
+}

@@ -4,7 +4,7 @@ import ProgressBar from "./audiocomponents/ProgressBar";
 import VolumeControl from "./audiocomponents/VolumeControl";
 import SongMetadata from "./audiocomponents/SongMetadata";
 import { pause, play } from "../../actions/audio/audio";
-import { Howl, Howler } from "howler";
+
 import { connect, useSelector } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
 import { AppState } from "../../../types/AppState";
@@ -39,37 +39,23 @@ function AudioPlayer({
   const audioElement = document.getElementById(
     "audio-element"
   ) as HTMLAudioElement;
-  const [sound, setSound] = useState<Howl | undefined>(undefined);
-  var durationUpdater;
+
   useEffect(() => {
+    if (!audioElement) return;
     if (currentSong) {
-      audioElement.src = `media-loader://C:test.flac`;
+      audioElement.src = `media-loader://${currentSong}`;
       audioElement.volume = defaultVolume;
       audioElement.play();
-      console.log(audioElement);
-      const newSound = new Howl({
-        src: [``],
-        html5: true,
-        onplay: function () {},
-      });
-      if (sound) {
-        sound.play();
-        sound.stop();
-        sound.unload();
-      }
-      setSound(newSound);
-
       play();
     } else {
-      setSound(undefined);
+      audioElement.src = ""; // Set the src to an empty string
     }
-    sound?.unload();
   }, [currentSong]);
   return (
     <div className="audio-player">
       <audio id="audio-element" />
-      <PlayPauseButton sound={sound} />
-      <ProgressBar sound={sound} />
+      <PlayPauseButton audioElement={audioElement} />
+      <ProgressBar />
       <VolumeControl defaultValue={defaultVolume} />
     </div>
   );

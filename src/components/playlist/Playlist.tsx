@@ -1,29 +1,47 @@
-import { NoInfer } from "@reduxjs/toolkit/dist/tsHelpers";
 import { ShortcutTags, Tags, TagType } from "jsmediatags/types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
-import { setCurrentSong } from "../../actions/audio/setCurrentSong";
+import { setCurrentSong, setNextSong } from "../../actions/audio/setSong";
 import { Data } from "../../../types/songMetadata";
+import { AppState } from "../../../types/AppState";
 
 type Playlist = {
   data: Data;
+  currentSong: string;
 };
 type file = {
   file: File | null;
 };
-function Playlist({ data }: Playlist) {
+function Playlist({ data, currentSong }: Playlist) {
   const dispatch = useDispatch();
-  function handleSelectSong(p: string) {
-    window.electronAPI.send("path-selected", p);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
 
-    dispatch(setCurrentSong(p));
+  function handleSelectSong(index: number) {
+    setCurrentSongIndex(index);
+
+    dispatch(setCurrentSong(data.filePaths[index]));
+    dispatch(setNextSong(data.filePaths[index + 1]));
   }
-  console.log(data.filePaths[0]);
+  useEffect(() => {
+    setCurrentSongIndex(currentSongIndex + 1);
+    let nextSongIndex = currentSongIndex + 1;
+
+    if (nextSongIndex >= data.filePaths.length) {
+      nextSongIndex = 0;
+    }
+    if (currentSongIndex + 1 >= data.filePaths.length) {
+      setCurrentSongIndex(0);
+    }
+    console.log(
+      currentSongIndex + " - Current Index" + nextSongIndex + " - Next Index"
+    );
+    dispatch(setNextSong(data.filePaths[nextSongIndex]));
+  }, [currentSong]);
   return (
     <div>
       {data.songs && data.songs.length > 0 ? (
         data.songs.map((song: { songData: ShortcutTags }, index: any) => (
-          <button onClick={() => handleSelectSong(data.filePaths[index])}>
+          <button onClick={() => handleSelectSong(index)}>
             {song.songData.artist}-{song.songData.title}
           </button>
         ))
@@ -33,8 +51,12 @@ function Playlist({ data }: Playlist) {
     </div>
   );
 }
+const mapStateToProps = (state: AppState) => ({
+  currentSong: state.audio.currentSong,
+  nextSong: state.audio.nextSong,
+});
 const mapDispatchToProps = {
   setCurrentSong,
 };
 
-export default connect(null, mapDispatchToProps)(Playlist);
+export default connect(mapStateToProps, mapDispatchToProps)(Playlist);

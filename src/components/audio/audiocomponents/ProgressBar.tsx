@@ -6,18 +6,19 @@ import "./ProgressBar.css";
 
 type ProgressBarProps = {
   progress: number;
-  sound: Howl | undefined;
 };
 
-function ProgressBar({ progress, sound }: ProgressBarProps) {
+function ProgressBar({ progress }: ProgressBarProps) {
+  const audioElement = document.getElementById(
+    "audio-element"
+  ) as HTMLAudioElement;
+
   const onProgressBarClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const progressBar = event.currentTarget;
     const { offsetX } = event.nativeEvent;
-
-    if (sound) {
-      const progressPercentage = (offsetX / progressBar.offsetWidth) * 100;
-      sound.seek((sound.duration() / 100) * progressPercentage);
-    }
+    const progressPercentage = (offsetX / progressBar.offsetWidth) * 100;
+    audioElement.currentTime =
+      (audioElement.duration / 100) * progressPercentage;
   };
   return (
     <div className="progress-bar" onClick={onProgressBarClick}>

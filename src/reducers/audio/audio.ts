@@ -5,12 +5,14 @@ import {
   UpdateSongProgressAction,
 } from "../../../types/audio/UpdateSongProgressAction";
 import { SetVolumeAction } from "../../../types/audio/SetVolumeAction";
-import { SetCurrentSong } from "../../../types/audio/SetCurrentSong";
+import { SetCurrentSong, SetNextSong } from "../../../types/audio/SetSong";
 const initialState: AudioState = {
   isPlaying: false,
   progress: 0,
   volume: 0.2,
+  nextSong: "",
   currentSong: "",
+
   currentTrack: {
     id: "",
     title: "",
@@ -28,6 +30,7 @@ export default (
     | SetVolumeAction
     | ResetSongProgressAction
     | SetCurrentSong
+    | SetNextSong
 ) => {
   switch (action.type) {
     case "PLAY":
@@ -62,6 +65,12 @@ export default (
       return {
         ...state,
         currentSong: action.payload.currentSong,
+      };
+    case "SET_NEXT_SONG":
+      console.log("Next song: ", action.payload.nextSong);
+      return {
+        ...state,
+        nextSong: action.payload.nextSong,
       };
     // Other cases go here
     default:
