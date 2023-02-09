@@ -5,11 +5,13 @@ export type AppState = {
   progress: AudioState;
   currentSong: AudioState;
   nextSong: AudioState;
+  previousSong: AudioState;
 };
 export type AudioState = {
   isPlaying: boolean;
   currentSong: string;
   nextSong: string;
+  previousSong: string;
   currentTrack: Track;
   progress: number;
   volume: number;

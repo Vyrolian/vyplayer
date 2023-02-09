@@ -10,3 +10,9 @@ export interface SetNextSong {
     nextSong: string;
   };
 }
+export interface SetPreviousSong {
+  type: "SET_PREVIOUS_SONG";
+  payload: {
+    previousSong: string;
+  };
+}

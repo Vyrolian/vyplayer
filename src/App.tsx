@@ -45,7 +45,7 @@ function App() {
 
   return (
     <Provider store={store}>
-      <button onClick={handleOpenFile}>ass</button>
+      <button onClick={handleOpenFile}>Open</button>
 
       <AudioPlayer data={data} />
       <Playlist data={data} />
