@@ -56,6 +56,10 @@ function PlayPauseButton({
     dispatch(setCurrentSong(nextSong));
     console.log(nextSong);
   };
+  audioElement.onended = () => {
+    console.log(nextSong);
+    dispatch(setCurrentSong(nextSong));
+  };
   const handlePrevious = () => {
     if (progress < 10) {
       dispatch(setCurrentSong(previousSong));

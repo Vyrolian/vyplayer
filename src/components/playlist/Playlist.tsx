@@ -26,16 +26,15 @@ function Playlist({ data, currentSong }: Playlist) {
   }
   console.log(data.songs);
   useEffect(() => {
-    setCurrentSongIndex(currentSongIndex + 1);
+    setCurrentSongIndex((prevIndex) => prevIndex + 1);
     let previousSongIndex = currentSongIndex - 1;
     let nextSongIndex = currentSongIndex + 1;
 
     if (nextSongIndex >= data.songs.length) {
       nextSongIndex = 0;
-    }
-    if (currentSongIndex + 1 >= data.songs.length) {
       setCurrentSongIndex(0);
     }
+
     if (previousSongIndex < 0) {
       previousSongIndex = 0;
     }
