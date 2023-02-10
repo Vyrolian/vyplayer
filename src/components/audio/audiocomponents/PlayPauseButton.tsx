@@ -49,17 +49,18 @@ function PlayPauseButton({
     } else {
       play();
     }
-    console.log(nextSong + "ass");
+    console.log(nextSong);
   };
   //console.log(progress);
   const handleNext = () => {
     dispatch(setCurrentSong(nextSong));
     console.log(nextSong);
   };
-  audioElement.onended = () => {
-    console.log(nextSong);
-    dispatch(setCurrentSong(nextSong));
-  };
+  if (audioElement)
+    audioElement.onended = () => {
+      console.log(nextSong);
+      dispatch(setCurrentSong(nextSong));
+    };
   const handlePrevious = () => {
     if (progress < 10) {
       dispatch(setCurrentSong(previousSong));

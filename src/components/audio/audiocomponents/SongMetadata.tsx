@@ -1,26 +1,54 @@
 import { ShortcutTags, TagType } from "jsmediatags/types";
 import React, { useEffect, useState } from "react";
-var jsmediatags = window.jsmediatags;
-
-function SongMetadata() {
-  const audioElement = document.getElementById(
-    "audio-element"
-  ) as HTMLAudioElement;
-  const [metadata, setMetadata] = useState<ShortcutTags>();
-  useEffect(() => {
-    if (audioElement) {
-      jsmediatags.read(audioElement, {
-        onSuccess: (metadata: TagType) => {
-          //   console.log(metadata.tags.artist);
-          if (metadata) {
-          }
-
-          setMetadata(metadata.tags as ShortcutTags);
-        },
-        onError: (error: any) => {},
-      });
+import { connect } from "react-redux";
+import { AppState } from "../../../../types/AppState";
+import { Data } from "../../../../types/songMetadata";
+type SongMetadata = {
+  data1: Data;
+  currentSong: string;
+};
+function SongMetadata({ data1, currentSong }: SongMetadata) {
+  let currentSongData = data1.songs.find(
+    (song) => song.filePath === currentSong
+  );
+  let imageSrc;
+  if (currentSongData?.songData.picture) {
+    const { data, format } = currentSongData.songData.picture;
+    let base64String = "";
+    for (let i = 0; i < data.length; i++) {
+      base64String += String.fromCharCode(data[i]);
     }
-  }, [audioElement]);
-  return <div>{metadata && `${metadata.artist} - ${metadata.title}`}</div>;
+    imageSrc = `data:${format};base64,${window.btoa(base64String)}`;
+  } else {
+    imageSrc = "";
+  }
+
+  let currentSongTitle = currentSongData?.songData.title;
+  let picture = currentSongData?.songData.picture;
+  return (
+    <div>
+      {currentSongTitle ? (
+        <div>
+          <img
+            src={imageSrc}
+            style={{
+              width: "150px",
+            }}
+          />
+          {currentSongData?.songData.artist} - {currentSongData?.songData.title}
+        </div>
+      ) : (
+        <div>No title found</div>
+      )}
+    </div>
+  );
 }
-export default SongMetadata;
+function mapStateToProps(state: AppState) {
+  return {
+    nextSong: state.audio.nextSong,
+    volume: state.audio.volume,
+    currentSong: state.audio.currentSong,
+  };
+}
+
+export default connect(mapStateToProps, null)(SongMetadata);

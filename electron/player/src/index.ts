@@ -80,7 +80,7 @@ const createWindow = (): void => {
             );
 
             const song = filePaths[0];
-            console.log(song + "asswecan");
+            console.log(song);
 
             // set the first song as the source
 

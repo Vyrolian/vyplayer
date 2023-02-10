@@ -47,6 +47,7 @@ function App() {
       <button onClick={handleOpenFile}>Open</button>
 
       <AudioPlayer data={data} />
+      <SongMetadata data1={data} />
       <Playlist data={data} />
     </Provider>
   );
