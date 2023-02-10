@@ -8,6 +8,8 @@ import { AppState } from "../types/AppState";
 import Playlist from "./components/playlist/Playlist";
 import { IElectronAPI } from "./renderer";
 import { ShortcutTags, Tags } from "jsmediatags/types";
+import { Data } from "../types/songMetadata";
+import SongMetadata from "./components/audio/audiocomponents/SongMetadata";
 const rootReducer = combineReducers({
   audio: audioReducer,
 });
@@ -17,10 +19,7 @@ const store = configureStore({
 const handleSelectFiles = () => {
   // ipcRenderer.send("select-files");
 };
-type Data = {
-  filePaths: string[];
-  songs: { songData: ShortcutTags }[];
-};
+
 function App() {
   if (navigator.userAgent.indexOf("Electron") > -1) {
     console.log("Running in an Electron app!");

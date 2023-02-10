@@ -2,5 +2,5 @@ import { ShortcutTags } from "jsmediatags/types";
 
 export type Data = {
   filePaths: string[];
-  songs: { songData: ShortcutTags }[];
+  songs: { songData: ShortcutTags; filePath: string }[];
 };

@@ -1,3 +1,5 @@
+import { ShortcutTags, Tags } from "jsmediatags/types";
+
 export type AppState = {
   audio: AudioState;
   playlist: PlaylistState;
@@ -12,7 +14,7 @@ export type AudioState = {
   currentSong: string;
   nextSong: string;
   previousSong: string;
-  currentTrack: Track;
+  currentTrack: ShortcutTags;
   progress: number;
   volume: number;
 };
@@ -23,9 +25,10 @@ export type PlaylistState = {
 };
 
 export type Track = {
-  id: string;
+  track: string;
   title: string;
   artist: string;
+  album: string;
   duration: number;
   file: string;
 };

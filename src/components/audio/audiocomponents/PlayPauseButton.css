@@ -1,7 +1,7 @@
 .button {
-  background-color: #4caf50;
+  background-color: rgb(250, 10, 122);
   border: none;
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;

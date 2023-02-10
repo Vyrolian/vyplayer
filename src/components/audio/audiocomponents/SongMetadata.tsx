@@ -1,14 +1,15 @@
 import { ShortcutTags, TagType } from "jsmediatags/types";
 import React, { useEffect, useState } from "react";
 var jsmediatags = window.jsmediatags;
-type SongMetadata = {
-  file: Blob | null;
-};
-function SongMetadata({ file }: SongMetadata) {
+
+function SongMetadata() {
+  const audioElement = document.getElementById(
+    "audio-element"
+  ) as HTMLAudioElement;
   const [metadata, setMetadata] = useState<ShortcutTags>();
   useEffect(() => {
-    if (file) {
-      jsmediatags.read(file, {
+    if (audioElement) {
+      jsmediatags.read(audioElement, {
         onSuccess: (metadata: TagType) => {
           //   console.log(metadata.tags.artist);
           if (metadata) {
@@ -19,7 +20,7 @@ function SongMetadata({ file }: SongMetadata) {
         onError: (error: any) => {},
       });
     }
-  }, [file]);
+  }, [audioElement]);
   return <div>{metadata && `${metadata.artist} - ${metadata.title}`}</div>;
 }
 export default SongMetadata;

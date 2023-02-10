@@ -22,20 +22,18 @@ function Playlist({ data, currentSong }: Playlist) {
 
   function handleSelectSong(index: number) {
     setCurrentSongIndex(index);
-
-    dispatch(setCurrentSong(data.filePaths[index]));
-    dispatch(setPreviousSong(data.filePaths[index - 1]));
-    dispatch(setNextSong(data.filePaths[index + 1]));
+    dispatch(setCurrentSong(data.songs[index].filePath));
   }
+  console.log(data.songs);
   useEffect(() => {
     setCurrentSongIndex(currentSongIndex + 1);
     let previousSongIndex = currentSongIndex - 1;
     let nextSongIndex = currentSongIndex + 1;
 
-    if (nextSongIndex >= data.filePaths.length) {
+    if (nextSongIndex >= data.songs.length) {
       nextSongIndex = 0;
     }
-    if (currentSongIndex + 1 >= data.filePaths.length) {
+    if (currentSongIndex + 1 >= data.songs.length) {
       setCurrentSongIndex(0);
     }
     if (previousSongIndex < 0) {
@@ -49,25 +47,22 @@ function Playlist({ data, currentSong }: Playlist) {
         nextSongIndex +
         " - Next Index "
     );
-    dispatch(setPreviousSong(data.filePaths[previousSongIndex]));
-    dispatch(setNextSong(data.filePaths[nextSongIndex]));
+    if (previousSongIndex >= 0 && previousSongIndex < data.songs.length) {
+      dispatch(setPreviousSong(data.songs[previousSongIndex].filePath));
+    }
+    if (previousSongIndex >= 0 && previousSongIndex < data.songs.length) {
+      dispatch(setNextSong(data.songs[nextSongIndex].filePath));
+    }
   }, [currentSong]);
   console.log(data.songs);
   return (
     <div>
       {data.songs && data.songs.length > 0 ? (
-        data.songs
-          .sort(
-            (a, b) =>
-              parseInt(a.songData.track || "0") -
-              parseInt(b.songData.track || "0")
-          )
-          .map((song: { songData: ShortcutTags }, index: number) => (
-            <button onClick={() => handleSelectSong(index)}>
-              {song.songData.artist}-{song.songData.title} -{" "}
-              {song.songData.track}
-            </button>
-          ))
+        data.songs.map((song: { songData: ShortcutTags }, index: number) => (
+          <button onClick={() => handleSelectSong(index)}>
+            {song.songData.artist}-{song.songData.title} - {index}
+          </button>
+        ))
       ) : (
         <p>No songs found</p>
       )}

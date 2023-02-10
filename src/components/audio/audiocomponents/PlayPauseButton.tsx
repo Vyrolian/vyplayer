@@ -14,6 +14,7 @@ type PlayPauseButtonProps = {
   audioElement: HTMLAudioElement;
   nextSong: string;
   previousSong: string;
+  currentSong: string;
   progress: number;
 };
 function PlayPauseButton({
@@ -23,6 +24,7 @@ function PlayPauseButton({
   audioElement,
   nextSong,
   previousSong,
+  currentSong,
   progress,
 }: PlayPauseButtonProps) {
   const dispatch = useDispatch();
@@ -49,7 +51,7 @@ function PlayPauseButton({
     }
     console.log(nextSong + "ass");
   };
-  console.log(progress);
+  //console.log(progress);
   const handleNext = () => {
     dispatch(setCurrentSong(nextSong));
     console.log(nextSong);
@@ -59,6 +61,9 @@ function PlayPauseButton({
       dispatch(setCurrentSong(previousSong));
     } else {
       dispatch(updateSongProgress(0));
+      audioElement.currentTime = 0;
+    }
+    if (previousSong == currentSong && progress < 10) {
       audioElement.currentTime = 0;
     }
   };
@@ -80,6 +85,7 @@ const mapStateToProps = (state: AppState) => ({
   isPlaying: state.audio.isPlaying,
   nextSong: state.audio.nextSong,
   previousSong: state.audio.previousSong,
+  currentSong: state.audio.currentSong,
   progress: state.audio.progress,
 });
 

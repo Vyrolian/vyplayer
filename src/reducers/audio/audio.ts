@@ -17,13 +17,7 @@ const initialState: AudioState = {
   nextSong: "",
   currentSong: "",
   previousSong: "",
-  currentTrack: {
-    id: "",
-    title: "",
-    artist: "",
-    duration: 0,
-    file: "",
-  },
+  currentTrack: {},
 };
 
 export default (
