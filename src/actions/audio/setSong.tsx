@@ -1,5 +1,6 @@
 import {
   SetCurrentSong,
+  SetCurrentSongIndex,
   SetNextSong,
   SetPreviousSong,
 } from "../../../types/audio/SetSong";
@@ -8,6 +9,16 @@ export function setCurrentSong(currentSong: string): SetCurrentSong {
     type: "SET_CURRENT_SONG",
     payload: {
       currentSong,
+    },
+  };
+}
+export function setCurrentSongIndex(
+  currentSongIndex: number
+): SetCurrentSongIndex {
+  return {
+    type: "SET_CURRENT_SONG_INDEX",
+    payload: {
+      currentSongIndex,
     },
   };
 }

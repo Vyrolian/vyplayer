@@ -12,6 +12,7 @@ export type AppState = {
 export type AudioState = {
   isPlaying: boolean;
   currentSong: string;
+  currentSongIndex: number;
   nextSong: string;
   previousSong: string;
   currentTrack: ShortcutTags;

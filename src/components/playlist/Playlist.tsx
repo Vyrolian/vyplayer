@@ -1,8 +1,9 @@
-import { ShortcutTags, Tags, TagType } from "jsmediatags/types";
+import { PictureType, ShortcutTags, Tags, TagType } from "jsmediatags/types";
 import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import {
   setCurrentSong,
+  setCurrentSongIndex,
   setNextSong,
   setPreviousSong,
 } from "../../actions/audio/setSong";
@@ -11,69 +12,71 @@ import { AppState } from "../../../types/AppState";
 
 type Playlist = {
   data: Data;
-  currentSong: string;
 };
 type file = {
   file: File | null;
 };
-function Playlist({ data, currentSong }: Playlist) {
+
+function Playlist({ data }: Playlist) {
   const dispatch = useDispatch();
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
 
   function handleSelectSong(index: number) {
-    setCurrentSongIndex(index);
+    dispatch(setCurrentSongIndex(index));
+    console.log(index + "dick");
     dispatch(setCurrentSong(data.songs[index].filePath));
   }
-  console.log(data.songs);
-  useEffect(() => {
-    setCurrentSongIndex((prevIndex) => prevIndex + 1);
-    let previousSongIndex = currentSongIndex - 1;
-    let nextSongIndex = currentSongIndex + 1;
 
-    if (nextSongIndex >= data.songs.length) {
-      nextSongIndex = 0;
-      setCurrentSongIndex(0);
+  function convertImage(
+    imageSrc: string,
+    albumArtwork: { picture: { data: any; format: any } }
+  ) {
+    const { data, format } = albumArtwork.picture;
+    let base64String = "";
+    for (let i = 0; i < data.length; i++) {
+      base64String += String.fromCharCode(data[i]);
     }
+    imageSrc = `data:${format};base64,${window.btoa(base64String)}`;
+  }
 
-    if (previousSongIndex < 0) {
-      previousSongIndex = 0;
-    }
-    console.log(
-      previousSongIndex +
-        " - Previous Index " +
-        currentSongIndex +
-        " - Current Index " +
-        nextSongIndex +
-        " - Next Index "
-    );
-    if (previousSongIndex >= 0 && previousSongIndex < data.songs.length) {
-      dispatch(setPreviousSong(data.songs[previousSongIndex].filePath));
-    }
-    if (previousSongIndex >= 0 && previousSongIndex < data.songs.length) {
-      dispatch(setNextSong(data.songs[nextSongIndex].filePath));
-    }
-  }, [currentSong]);
-  console.log(data.songs);
   return (
-    <div>
-      {data.songs && data.songs.length > 0 ? (
-        data.songs.map((song: { songData: ShortcutTags }, index: number) => (
-          <button onClick={() => handleSelectSong(index)}>
-            {song.songData.artist}-{song.songData.title} - {index}
-          </button>
-        ))
-      ) : (
-        <p>No songs found</p>
-      )}
+    <div className="songs-container">
+      {data.songs
+        .sort((a, b) => {
+          if (!a.songData.artist) return -1;
+          if (!b.songData.artist) return 1;
+          if (a.songData.artist === b.songData.artist) {
+            if (!a.songData.album) return -1;
+            if (!b.songData.album) return 1;
+            return a.songData.album.localeCompare(b.songData.album);
+          }
+          return a.songData.artist.localeCompare(b.songData.artist);
+        })
+        .map((song, index) => (
+          <div key={song.filePath}>
+            {song.songData.artist !==
+              (data.songs[index - 1] &&
+                data.songs[index - 1].songData.artist) && (
+              <p className="artist-name">{song.songData.artist}</p>
+            )}
+            {song.songData.album !==
+              (data.songs[index - 1] &&
+                data.songs[index - 1].songData.album) && (
+              <p className="album-name">{song.songData.album}</p>
+            )}
+            <button className="song" onClick={() => handleSelectSong(index)}>
+              {song.songData.title} - {index}
+            </button>
+          </div>
+        ))}
     </div>
   );
 }
 const mapStateToProps = (state: AppState) => ({
-  currentSong: state.audio.currentSong,
   nextSong: state.audio.nextSong,
 });
 const mapDispatchToProps = {
   setCurrentSong,
+  setCurrentSongIndex,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playlist);

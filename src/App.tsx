@@ -26,7 +26,7 @@ function App() {
   } else {
     console.log("Not running in an Electron app.");
   }
-  const [data, setData] = useState<Data>({ filePaths: [], songs: [] });
+  const [data, setData] = useState<Data>({ albumArtworks: [], songs: [] });
 
   const [file1, setFile1] = useState<Blob | null>(null);
 

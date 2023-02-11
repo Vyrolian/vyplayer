@@ -11,8 +11,10 @@ import http from "http";
 import url from "url";
 import path, { join } from "path";
 import jsmediatags from "jsmediatags";
-import { Tags, TagType } from "jsmediatags/types";
+import { Tags, TagType, PictureType } from "jsmediatags/types";
 import { Howl, Howler } from "howler";
+import fastGlob from "fast-glob";
+import glob from "glob";
 interface SongData extends TagType {
   filePath: string;
 }
@@ -57,97 +59,107 @@ const createWindow = (): void => {
   /* ipcMain.on("dialog:openFile", () => {
     dialog.showOpenDialog({ properties: ["openFile", "multiSelections"] });
   }); */
+
   let songs: { songData: Tags }[] = [];
   let filesProcessed = 0;
-  ipcMain.on("dialog:openFile", (event) => {
-    songs = [];
-    filesProcessed = 0;
 
-    dialog
-      .showOpenDialog(mainWindow!, {
-        properties: ["openDirectory"],
-      })
-      .then(({ filePaths }) => {
-        if (filePaths.length) {
-          const directoryPath = filePaths[0];
-          fs.readdir(directoryPath, (err, files) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            const filePaths = files.map((file) =>
-              path.join(directoryPath, file)
-            );
+  ipcMain.on("dialog:openFile", async (event) => {
+    let songs: Array<{
+      filePath: string;
+      songData: {
+        title?: string;
+        artist?: string;
+        album?: string;
+        year?: string;
+        comment?: string;
+        track?: string;
+        genre?: string;
+      };
+    }> = [];
+    const albumArtworks: Array<{ album: string; picture: PictureType }> = [];
+    const albumPicturesMap = new Map<string, PictureType>();
+    let filesProcessed = 0;
+    let chunkSize = 50; // number of files to process in one chunk
+    let firstSongOfAlbum = true; // flag to track first song of album
 
-            const song = filePaths[0];
-            console.log(song);
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      properties: ["openDirectory"],
+    });
 
-            // set the first song as the source
+    if (!result.canceled && result.filePaths.length) {
+      const directoryPath = result.filePaths[0];
 
-            // play the first song
-
-            console.log(filePaths);
-            let tagsByFilePath: { filePath: string; songData: Tags }[] = [];
-            filePaths.forEach((filePath) => {
-              jsmediatags.read(filePath, {
-                onSuccess: (tag) => {
-                  songs.push({
-                    songData: tag.tags,
-                  });
-                  tagsByFilePath.push({
-                    songData: tag.tags,
-                    filePath: filePath,
-                  });
-                  songs.sort(
-                    (a, b) =>
-                      parseInt(a.songData.track) - parseInt(b.songData.track)
-                  );
-
-                  console.log(tag.tags.title);
-
-                  filesProcessed++;
-                  if (filesProcessed === filePaths.length) {
-                    event.reply("select-path", {
-                      songs: tagsByFilePath,
-                      filePaths: filePaths,
-                    });
-                  }
-                },
-                onError: (error: any) => {
-                  console.error(error);
-                  filesProcessed++;
-                },
-              });
-            });
-          });
-        }
+      // Use glob to search for files in the directory
+      const files = glob.sync("**/*.{mp3,flac,m4a}", {
+        cwd: directoryPath,
       });
-  });
 
+      let chunk = [];
+      for (let i = 0; i < files.length; i++) {
+        chunk.push(files[i]);
+        if (i % chunkSize === chunkSize - 1 || i === files.length - 1) {
+          processChunk(chunk, files.length, directoryPath);
+          chunk = [];
+        }
+      }
+    }
+
+    function processChunk(
+      chunk: string[],
+      totalFiles: number,
+      directoryPath: string
+    ) {
+      chunk.forEach((filePath: string) => {
+        jsmediatags.read(path.resolve(directoryPath, filePath), {
+          onSuccess: (tag) => {
+            const album = tag.tags.album;
+            const picture = tag.tags.picture;
+            if (!albumPicturesMap.has(album)) {
+              albumPicturesMap.set(album, picture);
+              albumArtworks.push({ album, picture });
+            }
+
+            const songData = {
+              title: tag.tags.title,
+              artist: tag.tags.artist,
+              album: tag.tags.album,
+              year: tag.tags.year,
+              comment: tag.tags.comment,
+              track: tag.tags.track,
+              genre: tag.tags.genre,
+            };
+
+            // Only add the picture to the first song of the album
+
+            songs.push({
+              filePath: path.resolve(directoryPath, filePath),
+              songData,
+            });
+
+            filesProcessed++;
+            if (filesProcessed === totalFiles) {
+              songs.sort(
+                (a, b) =>
+                  parseInt(a.songData.track) - parseInt(b.songData.track)
+              );
+              console.log(albumArtworks);
+              event.reply("select-path", {
+                songs,
+                albumArtworks,
+              });
+            }
+          },
+
+          onError: (error) => {
+            console.error(error);
+            filesProcessed++;
+          },
+        });
+      });
+    }
+  });
   ipcMain.on("path-selected", (event, path) => {
     console.log(path + "123");
-    const chunkSize = 1024 * 1024; // 1 MB in bytes
-    let currentChunk = 0;
-    let stream = fs.createReadStream(path, {
-      start: currentChunk,
-      end: chunkSize - 1,
-    });
-
-    stream.on("data", (chunk) => {
-      event.reply("on-file-select", chunk);
-      currentChunk += chunkSize;
-
-      const sound = new Howl({
-        src: ["./test.mp3"],
-        html5: true,
-        autoplay: true,
-        onload: function () {
-          console.log("Sound has loaded!");
-        },
-      });
-
-      sound.play();
-    });
   });
 
   app.whenReady().then(() => {

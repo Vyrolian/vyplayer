@@ -1,6 +1,10 @@
-import { ShortcutTags } from "jsmediatags/types";
+import { PictureType, ShortcutTags } from "jsmediatags/types";
 
 export type Data = {
-  filePaths: string[];
-  songs: { songData: ShortcutTags; filePath: string }[];
+  songs: {
+    artist: any;
+    songData: ShortcutTags;
+    filePath: string;
+  }[];
+  albumArtworks: Array<{ album: string; picture: PictureType }>;
 };

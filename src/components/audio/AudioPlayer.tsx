@@ -11,7 +11,12 @@ import { AppState } from "../../../types/AppState";
 import { Data } from "../../../types/songMetadata";
 import { setUseProxies } from "immer";
 import { set } from "immer/dist/internal";
-import { setCurrentSong } from "../../actions/audio/setSong";
+import {
+  setCurrentSong,
+  setCurrentSongIndex,
+  setNextSong,
+  setPreviousSong,
+} from "../../actions/audio/setSong";
 
 //import test from "./test.mp3";
 type AudioPlayerProps = {
@@ -21,6 +26,7 @@ type AudioPlayerProps = {
   volume: number;
   data: Data;
   currentSong: string;
+  currentSongIndex: number;
   nextSong: string;
 };
 
@@ -29,9 +35,11 @@ function AudioPlayer({
   play,
   pause,
   currentSong,
+  currentSongIndex,
   volume,
   nextSong,
 }: AudioPlayerProps) {
+  console.log(currentSongIndex + "assssssss");
   const storedVolume = localStorage.getItem("volume");
   let defaultVolume: number;
   if (storedVolume) {
@@ -43,12 +51,38 @@ function AudioPlayer({
     "audio-element"
   ) as HTMLAudioElement;
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!audioElement) return;
     if (currentSong) {
       audioElement.src = `media-loader://${currentSong}`;
       audioElement.volume = defaultVolume;
       audioElement.play();
+      console.log(currentSongIndex + "aaaaaaaaaa");
+      dispatch(setCurrentSongIndex(currentSongIndex + 1));
+      let previousSongIndex = currentSongIndex - 1;
+      let nextSongIndex = currentSongIndex + 1;
+
+      if (nextSongIndex >= data.songs.length) {
+        nextSongIndex = 0;
+        setCurrentSongIndex(0);
+      }
+
+      if (previousSongIndex < 0) {
+        previousSongIndex = 0;
+      }
+      console.log(
+        previousSongIndex +
+          " - Previous Index " +
+          currentSongIndex +
+          " - Current Index " +
+          nextSongIndex +
+          " - Next Index "
+      );
+      if (previousSongIndex >= 0 && previousSongIndex < data.songs.length) {
+        dispatch(setPreviousSong(data.songs[previousSongIndex].filePath));
+        dispatch(setNextSong(data.songs[nextSongIndex].filePath));
+      }
 
       play();
     } else {
@@ -71,6 +105,7 @@ function mapStateToProps(state: AppState) {
     nextSong: state.audio.nextSong,
     volume: state.audio.volume,
     currentSong: state.audio.currentSong,
+    currentSongIndex: state.audio.currentSongIndex,
   };
 }
 

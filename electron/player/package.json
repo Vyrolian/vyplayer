@@ -42,6 +42,7 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "express": "^4.18.2",
+    "fast-glob": "^3.2.12",
     "howler": "^2.2.3",
     "jsmediatags": "^3.9.7"
   }

@@ -7,6 +7,7 @@ import {
 import { SetVolumeAction } from "../../../types/audio/SetVolumeAction";
 import {
   SetCurrentSong,
+  SetCurrentSongIndex,
   SetNextSong,
   SetPreviousSong,
 } from "../../../types/audio/SetSong";
@@ -18,6 +19,7 @@ const initialState: AudioState = {
   currentSong: "",
   previousSong: "",
   currentTrack: {},
+  currentSongIndex: 0,
 };
 
 export default (
@@ -28,6 +30,7 @@ export default (
     | SetVolumeAction
     | ResetSongProgressAction
     | SetCurrentSong
+    | SetCurrentSongIndex
     | SetNextSong
     | SetPreviousSong
 ) => {
@@ -64,6 +67,12 @@ export default (
       return {
         ...state,
         currentSong: action.payload.currentSong,
+      };
+    case "SET_CURRENT_SONG_INDEX":
+      console.log("Current song index: ", action.payload.currentSongIndex);
+      return {
+        ...state,
+        currentSongIndex: action.payload.currentSongIndex,
       };
     case "SET_NEXT_SONG":
       console.log("Next song: ", action.payload.nextSong);
