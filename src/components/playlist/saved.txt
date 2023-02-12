@@ -1,0 +1,84 @@
+<div className="songs-container">
+      {data.songs
+        // sort the songs based on artist and album
+        .sort((a, b) => {
+          // if artist is not defined, move the song to the top
+          if (!a.songData.artist) return -1;
+          if (!b.songData.artist) return 1;
+
+          // convert artist names to lowercase for comparison
+          const aArtist = a.songData.artist.toLowerCase();
+          const bArtist = b.songData.artist.toLowerCase();
+
+          // if the artist names are the same or one starts with the other + "/"
+          if (
+            aArtist === bArtist ||
+            bArtist.startsWith(aArtist + "/") ||
+            aArtist.startsWith(bArtist + "/")
+          ) {
+            // if album is not defined, move the song to the top
+            if (!a.songData.album) return -1;
+            if (!b.songData.album) return 1;
+            // compare the album names
+            return a.songData.album.localeCompare(b.songData.album);
+          }
+          // compare the artist names
+          return aArtist.localeCompare(bArtist);
+        })
+        // map over the sorted songs to render each one
+        .map((song, index) => {
+          // initialize imageSrc as empty string
+          let imageSrc = "";
+          // find the matching album artwork for the current song
+          data.albumArtworks.map((albumArtwork) => {
+            if (
+              albumArtwork.album === song.songData.album &&
+              albumArtwork.picture
+            ) {
+              // convert the album artwork data to a base64 encoded string
+              const { data, format } = albumArtwork.picture;
+              let base64String = "";
+              for (let i = 0; i < data.length; i++) {
+                base64String += String.fromCharCode(data[i]);
+              }
+              imageSrc = `data:${format};base64,${window.btoa(base64String)}`;
+              return;
+            }
+          });
+          return (
+            <div key={song.filePath}>
+              {/* Display the artist name if it's different from the previous song's artist */}
+              {song.songData.artist?.toLowerCase() !==
+                (data.songs[index - 1] &&
+                  data.songs[index - 1].songData.artist?.toLowerCase()) &&
+                !(
+                  data.songs[index - 1] &&
+                  (song.songData.artist
+                    ?.toLowerCase()
+                    .startsWith(
+                      data.songs[index - 1].songData.artist?.toLowerCase() + "/"
+                    ) ||
+                    data.songs[index - 1].songData.artist
+                      ?.toLowerCase()
+                      .startsWith(song.songData.artist?.toLowerCase() + "/"))
+                ) && <p className="artist-name">{song.songData.artist}</p>}
+              {/* Display the album name if it's different from the previous song's album */}
+              {song.songData.album !==
+                (data.songs[index - 1] &&
+                  data.songs[index - 1].songData.album) && (
+                <p className="album-name">
+                  {song.songData.album}
+                  {/* Display the album artwork if it's available */}
+                  {imageSrc !== "" && (
+                    <img src={imageSrc} alt={song.songData.album} />
+                  )}
+                </p>
+              )}
+              {/* Display the song button */}
+              <button className="song" onClick={() => handleSelectSong(index)}>
+                {song.songData.artist} - {song.songData.title} - {index}
+              </button>
+            </div>
+          );
+        })}
+    </div>

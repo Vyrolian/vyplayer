@@ -1,0 +1,15 @@
+  <ul className="songs-list">
+        {data.songs
+          .filter((song) => {
+            const extractedArtistName = song.songData.artist
+              ?.split("/")[0]
+              .toLowerCase();
+            return extractedArtistName === artist?.toLowerCase();
+          })
+          .map((song, index) => (
+            <li key={startIndex + index}>
+              {song.songData.artist} {song.songData.title} -{" "}
+              {startIndex + index}
+            </li>
+          ))}
+      </ul>

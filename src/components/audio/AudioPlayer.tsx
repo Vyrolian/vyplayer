@@ -23,11 +23,9 @@ type AudioPlayerProps = {
   play: typeof play;
   pause: typeof pause;
   setVolume: typeof setVolume;
-  volume: number;
   data: Data;
   currentSong: string;
   currentSongIndex: number;
-  nextSong: string;
 };
 
 function AudioPlayer({
@@ -36,10 +34,7 @@ function AudioPlayer({
   pause,
   currentSong,
   currentSongIndex,
-  volume,
-  nextSong,
 }: AudioPlayerProps) {
-  console.log(currentSongIndex + "assssssss");
   const storedVolume = localStorage.getItem("volume");
   let defaultVolume: number;
   if (storedVolume) {
@@ -58,19 +53,20 @@ function AudioPlayer({
       audioElement.src = `media-loader://${currentSong}`;
       audioElement.volume = defaultVolume;
       audioElement.play();
-      console.log(currentSongIndex + "aaaaaaaaaa");
-      dispatch(setCurrentSongIndex(currentSongIndex + 1));
+
       let previousSongIndex = currentSongIndex - 1;
       let nextSongIndex = currentSongIndex + 1;
 
+      //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
+
       if (nextSongIndex >= data.songs.length) {
         nextSongIndex = 0;
-        setCurrentSongIndex(0);
+        dispatch(setCurrentSongIndex(0));
       }
-
-      if (previousSongIndex < 0) {
+      if (currentSongIndex == 0) {
         previousSongIndex = 0;
       }
+
       console.log(
         previousSongIndex +
           " - Previous Index " +
