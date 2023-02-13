@@ -1,5 +1,5 @@
 import { PictureType, ShortcutTags, Tags, TagType } from "jsmediatags/types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import {
   setCurrentSong,
@@ -8,15 +8,45 @@ import {
 import { Data } from "../../../types/songMetadata";
 import { AppState } from "../../../types/AppState";
 import Artist from "./playlistcomponents/Artist";
-
+import { openDB } from "idb";
 type Playlist = {
   data: Data;
 };
 
 const Playlist = React.memo(({ data }: Playlist) => {
-  const dispatch = useDispatch();
-
   console.log("Playlist component re-rendered");
+
+  const [data1, setData] = useState<{
+    albumArtworks: Array<{
+      album: string;
+      picture: PictureType;
+    }>;
+    songs: {
+      songData: ShortcutTags;
+      filePath: string;
+    }[];
+  }>();
+  useEffect(() => {
+    if (data && data.songs.length > 0) {
+      window.localStorage.setItem("MY_APP_STATE", JSON.stringify(data));
+      console.log("saved");
+    }
+  }, [data]);
+  let adata = {};
+  useEffect(() => {
+    const storedData: Data = JSON.parse(
+      window.localStorage.getItem("MY_APP_STATE") || "[]"
+    );
+    if (storedData !== null) setData(storedData);
+    if (data.songs.length == 0) {
+      data.songs = storedData.songs;
+      data.albumArtworks = storedData.albumArtworks;
+      console.log("check");
+    }
+    console.log(data);
+    console.log(storedData);
+  }, []);
+
   console.log(data.songs);
   data.songs.sort((a, b) => {
     // if artist is not defined, move the song to the top
@@ -56,7 +86,6 @@ const Playlist = React.memo(({ data }: Playlist) => {
     )
   );
 
-  console.log(artists + "ass");
   // console.log(artists);
   let startIndex = 0;
   return (

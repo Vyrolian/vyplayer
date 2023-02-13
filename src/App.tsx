@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import testmp3 from "./test.mp3";
 import { Provider, useSelector } from "react-redux";
 import audioReducer from "./reducers/audio/audio";
@@ -16,9 +16,6 @@ const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
 });
-const handleSelectFiles = () => {
-  // ipcRenderer.send("select-files");
-};
 
 function App() {
   if (navigator.userAgent.indexOf("Electron") > -1) {
@@ -27,8 +24,6 @@ function App() {
     console.log("Not running in an Electron app.");
   }
   const [data, setData] = useState<Data>({ albumArtworks: [], songs: [] });
-
-  const [file1, setFile1] = useState<Blob | null>(null);
 
   function handleOpenFile() {
     window.electronAPI.showOpenDialog();
@@ -53,4 +48,4 @@ function App() {
   );
 }
 
-export default App;
+export default memo(App);

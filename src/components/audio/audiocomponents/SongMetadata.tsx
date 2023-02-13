@@ -12,8 +12,12 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
     (song) => song.filePath === currentSong
   );
   let imageSrc;
-  if (currentSongData?.songData.picture) {
-    const { data, format } = currentSongData.songData.picture;
+  let albumArtwork = data1.albumArtworks.find(
+    (artwork) => artwork.album === currentSongData?.songData.album
+  );
+
+  if (albumArtwork) {
+    const { data, format } = albumArtwork.picture;
     let base64String = "";
     for (let i = 0; i < data.length; i++) {
       base64String += String.fromCharCode(data[i]);

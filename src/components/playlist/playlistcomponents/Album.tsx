@@ -24,10 +24,28 @@ const Album: React.FC<AlbumProps> = React.memo(
       dispatch(setCurrentSongIndex(index));
       dispatch(setCurrentSong(data.songs[index].filePath));
     }
+    let imageSrc = "";
+    console.log(album);
+    data.albumArtworks.map((albumArtwork) => {
+      if (albumArtwork.album === album && albumArtwork.picture) {
+        // convert the album artwork data to a base64 encoded string
+        const { data, format } = albumArtwork.picture;
+        let base64String = "";
+        for (let i = 0; i < data.length; i++) {
+          base64String += String.fromCharCode(data[i]);
+        }
+        imageSrc = `data:${format};base64,${window.btoa(base64String)}`;
+        return;
+      }
+    });
+    // console.log(imageSrc);
     let counter = startIndex;
     return (
       <div className="album-container">
         <h2 className="album-name">{album}</h2>
+        <div className="album-artwork">
+          <img src={imageSrc} style={{ width: 150 }} alt={album} />
+        </div>
         <ul className="songs-list">
           {artistSongs
             .filter((song) => song.songData.album === album)
