@@ -38,7 +38,7 @@ const Playlist = React.memo(({ data }: Playlist) => {
       window.localStorage.getItem("MY_APP_STATE") || "[]"
     );
     if (storedData !== null) setData(storedData);
-    if (data.songs.length == 0) {
+    if (!data.songs.length && storedData.songs.length > data.songs.length) {
       data.songs = storedData.songs;
       data.albumArtworks = storedData.albumArtworks;
       console.log("check");

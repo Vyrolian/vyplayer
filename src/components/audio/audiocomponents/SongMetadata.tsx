@@ -16,7 +16,7 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
     (artwork) => artwork.album === currentSongData?.songData.album
   );
 
-  if (albumArtwork) {
+  if (albumArtwork?.picture !== undefined) {
     const { data, format } = albumArtwork.picture;
     let base64String = "";
     for (let i = 0; i < data.length; i++) {

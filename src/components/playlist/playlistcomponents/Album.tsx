@@ -24,11 +24,16 @@ const Album: React.FC<AlbumProps> = React.memo(
       dispatch(setCurrentSongIndex(index));
       dispatch(setCurrentSong(data.songs[index].filePath));
     }
-    let imageSrc = "";
+    let imageSrc = "No picture";
     console.log(album);
     data.albumArtworks.map((albumArtwork) => {
-      if (albumArtwork.album === album && albumArtwork.picture) {
+      if (
+        albumArtwork.album === album &&
+        albumArtwork.picture &&
+        albumArtwork.picture.data
+      ) {
         // convert the album artwork data to a base64 encoded string
+
         const { data, format } = albumArtwork.picture;
         let base64String = "";
         for (let i = 0; i < data.length; i++) {
