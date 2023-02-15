@@ -1,5 +1,5 @@
 import { ShortcutTags } from "jsmediatags/types";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Data } from "../../../../types/songMetadata";
 import {
@@ -45,27 +45,34 @@ const Album: React.FC<AlbumProps> = React.memo(
     });
     // console.log(imageSrc);
     let counter = startIndex;
+    const [showSongs, setShowSongs] = useState(false);
     return (
       <div className="album-container">
-        <h2 className="album-name">{album}</h2>
+        <h2
+          className="album-name"
+          onClick={() => setShowSongs((prevState) => !prevState)}
+        >
+          {album}
+        </h2>
         <div className="album-artwork">
           <img src={imageSrc} style={{ width: 150 }} alt={album} />
         </div>
         <ul className="songs-list">
-          {artistSongs
-            .filter((song) => song.songData.album === album)
-            .map((song, index) => {
-              const currentIndex = counter;
-              counter += 1;
-              return (
-                <li
-                  key={currentIndex}
-                  onClick={() => handleSelectSong(currentIndex)}
-                >
-                  {song.songData.title} - {currentIndex}
-                </li>
-              );
-            })}
+          {showSongs &&
+            artistSongs
+              .filter((song) => song.songData.album === album)
+              .map((song, index) => {
+                const currentIndex = counter;
+                counter += 1;
+                return (
+                  <li
+                    key={currentIndex}
+                    onClick={() => handleSelectSong(currentIndex)}
+                  >
+                    {song.songData.title} - {currentIndex}
+                  </li>
+                );
+              })}
         </ul>
       </div>
     );

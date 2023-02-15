@@ -1,5 +1,5 @@
 import { ShortcutTags } from "jsmediatags/types";
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Data } from "../../../../types/songMetadata";
 import {
@@ -31,7 +31,7 @@ const Artist: React.FC<ArtistProps> = ({
 }) => {
   console.log("rerendered" + artist);
   let albums: any[] = [];
-
+  const [showAlbums, setShowAlbums] = useState(false);
   albums = Array.from(new Set(artistSongs.map((song) => song.songData.album)));
 
   console.log(artist);
@@ -40,27 +40,31 @@ const Artist: React.FC<ArtistProps> = ({
 
   return (
     <div className="artist-container">
-      <h2 className="artist-name">
+      <h2
+        className="artist-name"
+        onClick={() => setShowAlbums((prevShowAlbums) => !prevShowAlbums)}
+      >
         {artistSongs.find(
           (song) =>
             song.songData.artist?.toLowerCase() === artist?.toLowerCase()
         )?.songData.artist || "No artist"}
       </h2>
-      {albums.map((album) => {
-        const albumStartIndex = albumIndex;
-        albumIndex += artistSongs.filter(
-          (song) => song.songData.album === album
-        ).length;
-        return (
-          <Album
-            key={album}
-            data={data}
-            album={album}
-            startIndex={albumStartIndex}
-            artistSongs={artistSongs}
-          />
-        );
-      })}
+      {showAlbums &&
+        albums.map((album) => {
+          const albumStartIndex = albumIndex;
+          albumIndex += artistSongs.filter(
+            (song) => song.songData.album === album
+          ).length;
+          return (
+            <Album
+              key={album}
+              data={data}
+              album={album}
+              startIndex={albumStartIndex}
+              artistSongs={artistSongs}
+            />
+          );
+        })}
     </div>
   );
 };
