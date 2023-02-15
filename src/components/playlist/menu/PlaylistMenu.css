@@ -1,0 +1,38 @@
+.playlist-menu {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.playlist-menu h2 {
+  font-size: 1.2em;
+  margin: 0;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.playlist-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.playlist-menu li {
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.playlist-menu li:last-child {
+  border-bottom: none;
+}
+
+.playlist-menu a {
+  color: #333;
+  text-decoration: none;
+}
+
+.playlist-menu a:hover {
+  text-decoration: underline;
+}

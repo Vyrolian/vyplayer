@@ -10,6 +10,7 @@ import { IElectronAPI } from "./renderer";
 import { ShortcutTags, Tags } from "jsmediatags/types";
 import { Data } from "../types/songMetadata";
 import SongMetadata from "./components/audio/audiocomponents/SongMetadata";
+import PlaylistMenu from "./components/playlist/menu/PlaylistMenu";
 const rootReducer = combineReducers({
   audio: audioReducer,
 });
@@ -32,7 +33,25 @@ function App() {
     });
 
     window.electronAPI.on("select-path", (data: Data) => {
-      setData(data);
+      setData((prevData) => ({
+        albumArtworks: [
+          ...prevData.albumArtworks,
+          ...data.albumArtworks.filter((newArtwork) =>
+            prevData.albumArtworks.every(
+              (existingArtwork) => existingArtwork.album !== newArtwork.album
+            )
+          ),
+        ],
+        songs: [
+          ...prevData.songs,
+          ...data.songs.filter((newSong) =>
+            prevData.songs.every(
+              (existingSong) =>
+                existingSong.songData.title !== newSong.songData.title
+            )
+          ),
+        ],
+      }));
     });
   }
   let src = "";
@@ -43,6 +62,7 @@ function App() {
 
       <AudioPlayer data={data} />
       <SongMetadata data1={data} />
+      <PlaylistMenu />
       <Playlist data={data} />
     </Provider>
   );

@@ -9,12 +9,18 @@ import { Data } from "../../../types/songMetadata";
 import { AppState } from "../../../types/AppState";
 import Artist from "./playlistcomponents/Artist";
 import { openDB } from "idb";
+import PlaylistMenu from "./menu/PlaylistMenu";
 type Playlist = {
   data: Data;
 };
 
 const Playlist = React.memo(({ data }: Playlist) => {
   console.log("Playlist component re-rendered");
+  const dispatch = useDispatch();
+  function handleSelectSong(index: number) {
+    dispatch(setCurrentSongIndex(index));
+    dispatch(setCurrentSong(data.songs[index].filePath));
+  }
 
   const [data1, setData] = useState<{
     albumArtworks: Array<{
@@ -26,19 +32,23 @@ const Playlist = React.memo(({ data }: Playlist) => {
       filePath: string;
     }[];
   }>();
+
   useEffect(() => {
-    if (data && data.songs.length > 0) {
+    if (
+      Array.isArray(data.songs) &&
+      Array.isArray(data.albumArtworks) &&
+      data.albumArtworks.length > 0
+    ) {
       window.localStorage.setItem("MY_APP_STATE", JSON.stringify(data));
       console.log("saved");
     }
   }, [data]);
-  let adata = {};
   useEffect(() => {
     const storedData: Data = JSON.parse(
       window.localStorage.getItem("MY_APP_STATE") || "[]"
     );
     if (storedData !== null) setData(storedData);
-    if (!data.songs.length && storedData.songs.length > data.songs.length) {
+    if (!data.songs?.length && storedData.albumArtworks) {
       data.songs = storedData.songs;
       data.albumArtworks = storedData.albumArtworks;
       console.log("check");
@@ -46,7 +56,11 @@ const Playlist = React.memo(({ data }: Playlist) => {
     console.log(data);
     console.log(storedData);
   }, []);
+  const [playlists, setPlaylists] = useState<string[]>([]);
 
+  function createNewPlaylist(playlistName: string) {
+    setPlaylists((prevPlaylists) => [...prevPlaylists, playlistName]);
+  }
   console.log(data.songs);
   data.songs.sort((a, b) => {
     // if artist is not defined, move the song to the top
@@ -74,6 +88,7 @@ const Playlist = React.memo(({ data }: Playlist) => {
     // compare the artist names
     return aArtist.localeCompare(bArtist);
   });
+  const [displayByArtist, setDisplayByArtist] = useState(false);
 
   const artists = Array.from(
     new Set(
@@ -90,25 +105,47 @@ const Playlist = React.memo(({ data }: Playlist) => {
   let startIndex = 0;
   return (
     <div>
+      <button onClick={() => setDisplayByArtist((prevDisplay) => !prevDisplay)}>
+        {displayByArtist ? "Display by songs" : "Display by artist"}
+      </button>
       <div className="songs-container">
-        {artists.map((artist, index) => {
-          const artistSongs = data.songs.filter(
-            (song) =>
-              song.songData.artist?.toLowerCase().split("/")[0] === artist
-          );
-          console.log(artistSongs);
-          const artistStartIndex = startIndex;
-          startIndex += artistSongs.length;
-          return (
-            <Artist
-              key={index}
-              data={data}
-              artist={artist}
-              startIndex={artistStartIndex}
-              artistSongs={artistSongs}
-            />
-          );
-        })}
+        {displayByArtist
+          ? artists.map((artist, index) => {
+              const artistSongs = data.songs.filter(
+                (song) =>
+                  song.songData.artist?.toLowerCase().split("/")[0] === artist
+              );
+              console.log(artistSongs);
+              const artistStartIndex = startIndex;
+              startIndex += artistSongs.length;
+              return (
+                <Artist
+                  key={index}
+                  data={data}
+                  artist={artist}
+                  startIndex={artistStartIndex}
+                  artistSongs={artistSongs}
+                />
+              );
+            })
+          : data.songs.map((song, index) => {
+              return (
+                <div>
+                  <div className="song-details">
+                    <div
+                      className="song-artist"
+                      key={index}
+                      onClick={() => {
+                        handleSelectSong(index);
+                      }}
+                    >
+                      {song.songData.artist} - {song.songData.title} -{" "}
+                      {song.songData.album}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
       </div>
     </div>
   );
