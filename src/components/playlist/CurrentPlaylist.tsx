@@ -37,16 +37,8 @@ const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
       filePath: string;
     }[]
   >([]);
-  useEffect(() => {
-    let n: any;
-    if (data.songs.map((song) => !song.playlist.includes(currentPlaylist))) {
-      n = data.songs.map((song) => {
-        return { ...song, playlist: [...song.playlist, currentPlaylist] };
-      });
-      data.songs = n;
-    }
-    console.log(n);
 
+  useEffect(() => {
     if (
       Array.isArray(data.songs) &&
       Array.isArray(data.albumArtworks) &&
@@ -55,38 +47,50 @@ const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
       window.localStorage.setItem("MY_APP_STATE", JSON.stringify(data));
       console.log("saved");
     }
-    const filtered = data.songs
-      .filter(
-        (song) => song.playlist && song.playlist.includes(currentPlaylist)
-      )
-      .sort((a, b) => {
-        // if artist is not defined, move the song to the top
-        if (!a.songData.artist) return -1;
-        if (!b.songData.artist) return 1;
-
-        // convert artist names to lowercase for comparison
-        const aArtist = a.songData.artist.toLowerCase();
-        const bArtist = b.songData.artist.toLowerCase();
-
-        // if the artist names are the same or one starts with the other + "/"
-        if (
-          aArtist === bArtist ||
-          bArtist.startsWith(aArtist + "/") ||
-          aArtist.startsWith(bArtist + "/")
-        ) {
-          // if album is not defined, move the song to the top
-          if (!a.songData.album) return -1;
-          if (!b.songData.album) return 1;
-          // compare the album names
-          return a.songData.album.localeCompare(b.songData.album);
-        }
-        if (aArtist === undefined) {
-        }
-        // compare the artist names
-        return aArtist.localeCompare(bArtist);
+    if (data.songs.map((song) => !song.playlist.includes(currentPlaylist))) {
+      const n = data.songs.map((song) => {
+        return { ...song, playlist: [...song.playlist, currentPlaylist] };
       });
-    setFiltered(filtered);
+      data.songs = n;
+      console.log("asss" + data.songs);
+    }
+    //   setFiltered(filtered);
   }, [data]);
+
+  localStorage.clear();
+  useEffect(() => {
+    let filtered = data.songs.sort((a, b) => {
+      // if artist is not defined, move the song to the top
+      if (!a.songData.artist) return -1;
+      if (!b.songData.artist) return 1;
+
+      // convert artist names to lowercase for comparison
+      const aArtist = a.songData.artist.toLowerCase();
+      const bArtist = b.songData.artist.toLowerCase();
+
+      // if the artist names are the same or one starts with the other + "/"
+      if (
+        aArtist === bArtist ||
+        bArtist.startsWith(aArtist + "/") ||
+        aArtist.startsWith(bArtist + "/")
+      ) {
+        // if album is not defined, move the song to the top
+        if (!a.songData.album) return -1;
+        if (!b.songData.album) return 1;
+        // compare the album names
+        return a.songData.album.localeCompare(b.songData.album);
+      }
+      if (aArtist === undefined) {
+      }
+      // compare the artist names
+      return aArtist.localeCompare(bArtist);
+    });
+    filtered = filtered.filter(
+      (song) => song.playlist && song.playlist.includes(currentPlaylist)
+    );
+    setFiltered(filtered);
+  }, [data, currentPlaylist]);
+
   useEffect(() => {
     const storedData: Data = JSON.parse(
       window.localStorage.getItem("MY_APP_STATE") || "[]"
