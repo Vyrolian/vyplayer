@@ -5,12 +5,13 @@ import audioReducer from "./reducers/audio/audio";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import AudioPlayer from "./components/audio/AudioPlayer";
 import { AppState } from "../types/AppState";
-import Playlist from "./components/playlist/Playlist";
+import CurrentPlaylist from "./components/playlist/CurrentPlaylist";
 import { IElectronAPI } from "./renderer";
 import { ShortcutTags, Tags } from "jsmediatags/types";
 import { Data } from "../types/songMetadata";
 import SongMetadata from "./components/audio/audiocomponents/SongMetadata";
 import PlaylistMenu from "./components/playlist/menu/PlaylistMenu";
+
 const rootReducer = combineReducers({
   audio: audioReducer,
 });
@@ -19,13 +20,16 @@ const store = configureStore({
 });
 
 function App() {
+  const state = store.getState();
+
+  const currentPlaylist = state.audio.currentPlaylist;
+  console.log(currentPlaylist);
   if (navigator.userAgent.indexOf("Electron") > -1) {
     console.log("Running in an Electron app!");
   } else {
     console.log("Not running in an Electron app.");
   }
   const [data, setData] = useState<Data>({ albumArtworks: [], songs: [] });
-
   function handleOpenFile() {
     window.electronAPI.showOpenDialog();
     window.electronAPI.on("on-file-select", (data: any) => {
@@ -44,12 +48,17 @@ function App() {
         ],
         songs: [
           ...prevData.songs,
-          ...data.songs.filter((newSong) =>
-            prevData.songs.every(
-              (existingSong) =>
-                existingSong.songData.title !== newSong.songData.title
+          ...data.songs
+            .filter((newSong) =>
+              prevData.songs.every(
+                (existingSong) =>
+                  existingSong.songData.title !== newSong.songData.title
+              )
             )
-          ),
+            .map((song) => ({
+              ...song,
+              playlist: song.playlist ? song.playlist : ["default"], // set default playlist if no playlists are present
+            })),
         ],
       }));
     });
@@ -63,7 +72,7 @@ function App() {
       <AudioPlayer data={data} />
       <SongMetadata data1={data} />
       <PlaylistMenu />
-      <Playlist data={data} />
+      <CurrentPlaylist data={data} />
     </Provider>
   );
 }

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import "./PlaylistMenu.css";
+import { useDispatch } from "react-redux";
+import { setCurrentPlaylist } from "../../../actions/playlist/setCurrentPlaylist";
+import { play } from "../../../actions/audio/audio";
 type Playlist = Array<{
   id: string;
   name: string;
@@ -15,7 +18,10 @@ const PlaylistMenu = () => {
     };
     setPlaylist((prevPlaylist) => [newPlaylist, ...prevPlaylist]);
   }
-
+  const dispatch = useDispatch();
+  function handleSelectPlaylist(playlistName: string) {
+    dispatch(setCurrentPlaylist(playlistName));
+  }
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (newPlaylistName.trim() !== "") {
@@ -46,7 +52,9 @@ const PlaylistMenu = () => {
       <ul>
         {playlist.map((playlist) => (
           <li key={playlist.id}>
-            {playlist.name}
+            <button onClick={() => handleSelectPlaylist(playlist.name)}>
+              {playlist.name}
+            </button>
             <button onClick={() => deletePlaylist(playlist.id)}>Delete</button>
           </li>
         ))}
