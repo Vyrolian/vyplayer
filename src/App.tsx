@@ -57,7 +57,7 @@ function App() {
             )
             .map((song) => ({
               ...song,
-              playlist: song.playlist ? song.playlist : ["default"], // set default playlist if no playlists are present
+              playlist: song.playlist ? song.playlist : ["Library"], // set default playlist if no playlists are present
             })),
         ],
       }));

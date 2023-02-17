@@ -47,13 +47,7 @@ const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
       window.localStorage.setItem("MY_APP_STATE", JSON.stringify(data));
       console.log("saved");
     }
-    if (data.songs.map((song) => !song.playlist.includes(currentPlaylist))) {
-      const n = data.songs.map((song) => {
-        return { ...song, playlist: [...song.playlist, currentPlaylist] };
-      });
-      data.songs = n;
-      console.log("asss" + data.songs);
-    }
+
     //   setFiltered(filtered);
   }, [data]);
 

@@ -10,7 +10,9 @@ type Playlist = Array<{
 }>;
 const PlaylistMenu = () => {
   const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [playlist, setPlaylist] = useState<Playlist>([{ id: "0", name: "a " }]);
+  const [playlist, setPlaylist] = useState<Playlist>([
+    { id: "0", name: "Library" },
+  ]);
   function createNewPlaylist(name: string) {
     const newPlaylist = {
       id: nanoid(),
