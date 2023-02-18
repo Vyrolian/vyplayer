@@ -11,6 +11,7 @@ import { ShortcutTags, Tags } from "jsmediatags/types";
 import { Data } from "../types/songMetadata";
 import SongMetadata from "./components/audio/audiocomponents/SongMetadata";
 import PlaylistMenu from "./components/playlist/menu/PlaylistMenu";
+import { useDispatch } from "react-redux";
 
 const rootReducer = combineReducers({
   audio: audioReducer,
@@ -20,10 +21,6 @@ const store = configureStore({
 });
 
 function App() {
-  const state = store.getState();
-
-  const currentPlaylist = state.audio.currentPlaylist;
-  console.log(currentPlaylist);
   if (navigator.userAgent.indexOf("Electron") > -1) {
     console.log("Running in an Electron app!");
   } else {
@@ -57,12 +54,13 @@ function App() {
             )
             .map((song) => ({
               ...song,
-              playlist: song.playlist ? song.playlist : ["Library"], // set default playlist if no playlists are present
+              playlists: song.playlists ? song.playlists : ["Library"], // set default playlist if no playlists are present
             })),
         ],
       }));
     });
   }
+
   let src = "";
 
   return (

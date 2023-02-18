@@ -8,14 +8,23 @@ import {
 import { Data } from "../../../types/songMetadata";
 import { AppState } from "../../../types/AppState";
 import Artist from "./playlistcomponents/Artist";
-type Playlist = {
+import { Playlist } from "../../../types/playlist/SetPlaylists";
+import Select from "react-select";
+import ContextMenu from "./ContextMenu";
+type CurrentPlaylist = {
   data: Data;
   currentPlaylist: string;
+  playlists: Playlist;
 };
 
-const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
+const CurrentPlaylist = ({
+  data,
+  currentPlaylist,
+  playlists,
+}: CurrentPlaylist) => {
   console.log("Playlist component re-rendered");
   const dispatch = useDispatch();
+
   function handleSelectSong(index: number) {
     dispatch(setCurrentSongIndex(index));
     dispatch(setCurrentSong(data.songs[index].filePath));
@@ -80,7 +89,7 @@ const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
       return aArtist.localeCompare(bArtist);
     });
     filtered = filtered.filter(
-      (song) => song.playlist && song.playlist.includes(currentPlaylist)
+      (song) => song.playlists && song.playlists.includes(currentPlaylist)
     );
     setFiltered(filtered);
   }, [data, currentPlaylist]);
@@ -116,10 +125,63 @@ const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
     )
   );
 
+  function handleAddToPlaylist(index: number, playlistName: string) {
+    const song = data.songs[index];
+    if (!song.playlists) {
+      song.playlists = [playlistName];
+    } else if (!song.playlists.includes(playlistName)) {
+      song.playlists.push(playlistName);
+    }
+    const newData = { ...data };
+    setData(newData);
+  }
   // console.log(artists);
+  const options = playlists.map((playlist) => ({
+    value: playlist.name,
+    label: playlist.name,
+  }));
   let startIndex = 0;
+
+  document.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    const x = event.clientX;
+    const y = event.clientY;
+    // show the context menu at (x, y)
+  });
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    index: number;
+  } | null>(null);
+  console.log(contextMenu);
+  function handleContextMenu(event: React.MouseEvent, index: number) {
+    event.preventDefault();
+    setContextMenu({ x: event.clientX, y: event.clientY, index: index });
+    console.log(event.clientX);
+  }
+  document.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+
+    // console.log(x);
+  });
+  function handleCloseContextMenu() {
+    setContextMenu(null);
+  }
+
   return (
-    <div>
+    <div style={{ height: "1200px", overflowY: "auto" }}>
+      <div>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            index={contextMenu.index}
+            onClose={handleCloseContextMenu}
+            songs={data.songs}
+          />
+        )}
+        {/* rest of the component */}
+      </div>
       <button onClick={() => setDisplayByArtist((prevDisplay) => !prevDisplay)}>
         {displayByArtist ? "Display by songs" : "Display by artist"}
       </button>
@@ -134,19 +196,25 @@ const CurrentPlaylist = ({ data, currentPlaylist }: Playlist) => {
               const artistStartIndex = startIndex;
               startIndex += artistSongs.length;
               return (
-                <Artist
-                  key={index}
-                  data={data}
-                  artist={artist}
-                  startIndex={artistStartIndex}
-                  artistSongs={artistSongs}
-                />
+                <div onContextMenu={(event) => handleContextMenu(event, index)}>
+                  <Artist
+                    key={index}
+                    data={data}
+                    artist={artist}
+                    startIndex={artistStartIndex}
+                    artistSongs={artistSongs}
+                  />
+                </div>
               );
             })
           : filtered.map((song, index) => {
               return (
-                <div>
+                <div
+                  key={index}
+                  onContextMenu={(event) => handleContextMenu(event, index)}
+                >
                   <div className="song-details">
+                    {/* display the song details */}
                     <div
                       className="song-artist"
                       key={index}
@@ -172,6 +240,7 @@ const mapDispatchToProps = {
 function mapStateToProps(state: AppState) {
   return {
     currentPlaylist: state.audio.currentPlaylist,
+    playlists: state.audio.playlists,
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(CurrentPlaylist);

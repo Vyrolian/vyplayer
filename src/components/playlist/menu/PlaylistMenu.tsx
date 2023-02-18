@@ -1,26 +1,27 @@
 import React, { useState } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import "./PlaylistMenu.css";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { setCurrentPlaylist } from "../../../actions/playlist/setCurrentPlaylist";
+import { setPlaylists } from "../../../actions/playlist/setPlaylists";
 import { play } from "../../../actions/audio/audio";
-type Playlist = Array<{
-  id: string;
-  name: string;
-}>;
-const PlaylistMenu = () => {
+import { AppState } from "../../../../types/AppState";
+import { Playlist } from "../../../../types/playlist/SetPlaylists";
+type PlaylistMenu = {
+  playlists: Playlist;
+};
+const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
   const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [playlist, setPlaylist] = useState<Playlist>([
-    { id: "0", name: "Library" },
-  ]);
   function createNewPlaylist(name: string) {
     const newPlaylist = {
       id: nanoid(),
       name: name,
     };
-    setPlaylist((prevPlaylist) => [newPlaylist, ...prevPlaylist]);
+
+    dispatch(setPlaylists([...playlists, newPlaylist]));
   }
   const dispatch = useDispatch();
+
   function handleSelectPlaylist(playlistName: string) {
     dispatch(setCurrentPlaylist(playlistName));
   }
@@ -31,11 +32,10 @@ const PlaylistMenu = () => {
       setNewPlaylistName("");
     }
   };
-  console.log(playlist);
+  console.log(playlists);
   function deletePlaylist(id: string) {
-    setPlaylist((prevPlaylist) =>
-      prevPlaylist.filter((playlist) => playlist.id !== id)
-    );
+    const updatedPlaylists = playlists.filter((playlist) => playlist.id !== id);
+    dispatch(setPlaylists(updatedPlaylists));
   }
   return (
     <div className="playlist-menu">
@@ -52,12 +52,16 @@ const PlaylistMenu = () => {
         <button type="submit">Create</button>
       </form>
       <ul>
-        {playlist.map((playlist) => (
+        {playlists.map((playlist) => (
           <li key={playlist.id}>
             <button onClick={() => handleSelectPlaylist(playlist.name)}>
               {playlist.name}
             </button>
-            <button onClick={() => deletePlaylist(playlist.id)}>Delete</button>
+            {playlist.name !== "Library" && (
+              <button onClick={() => deletePlaylist(playlist.id)}>
+                Delete
+              </button>
+            )}
           </li>
         ))}
       </ul>
@@ -65,4 +69,9 @@ const PlaylistMenu = () => {
   );
 };
 
-export default PlaylistMenu;
+function mapStateToProps(state: AppState) {
+  return {
+    playlists: state.audio.playlists,
+  };
+}
+export default connect(mapStateToProps, null)(PlaylistMenu);
