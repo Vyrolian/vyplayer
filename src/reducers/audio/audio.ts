@@ -69,37 +69,37 @@ export default (
         progress: action.payload.progress,
       };
     case "SET_CURRENT_SONG":
-      console.log("Current song: ", action.payload.currentSong);
+      //    console.log("Current song: ", action.payload.currentSong);
       return {
         ...state,
         currentSong: action.payload.currentSong,
       };
     case "SET_CURRENT_SONG_INDEX":
-      console.log("Current song index: ", action.payload.currentSongIndex);
+      //     console.log("Current song index: ", action.payload.currentSongIndex);
       return {
         ...state,
         currentSongIndex: action.payload.currentSongIndex,
       };
     case "SET_NEXT_SONG":
-      console.log("Next song: ", action.payload.nextSong);
+      //    console.log("Next song: ", action.payload.nextSong);
       return {
         ...state,
         nextSong: action.payload.nextSong,
       };
     case "SET_PREVIOUS_SONG":
-      console.log("Previous song:", action.payload.previousSong);
+      //    console.log("Previous song:", action.payload.previousSong);
       return {
         ...state,
         previousSong: action.payload.previousSong,
       };
     case "SET_CURRENT_PLAYLIST":
-      console.log("Current playlist: ", action.payload.currentPlaylist);
+      //   console.log("Current playlist: ", action.payload.currentPlaylist);
       return {
         ...state,
         currentPlaylist: action.payload.currentPlaylist,
       };
     case "SET_PLAYLISTS":
-      console.log("Playlists: ", action.payload.playlists);
+      //   console.log("Playlists: ", action.payload.playlists);
       return {
         ...state,
         playlists: action.payload.playlists,

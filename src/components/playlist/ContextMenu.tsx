@@ -5,6 +5,7 @@ import { AppState } from "../../../types/AppState";
 import { Playlist } from "../../../types/playlist/SetPlaylists";
 import { Data } from "../../../types/songMetadata";
 import Select from "react-select";
+import CurrentPlaylist from "./CurrentPlaylist";
 type MenuProps = {
   x: number;
   y: number;
@@ -17,6 +18,9 @@ type MenuProps = {
   }[];
   playlists: Playlist;
   artist?: string;
+  album?: string;
+  currentPlaylist: string;
+  onSongsRemoved: () => void;
 };
 
 const ContextMenu = ({
@@ -27,7 +31,12 @@ const ContextMenu = ({
   songs,
   playlists,
   artist,
+  album,
+  currentPlaylist,
+  onSongsRemoved,
 }: MenuProps) => {
+  console.log("CONTEXTMENU ARTINS", artist);
+  console.log("CONTEXTMENU ALBUM", album);
   interface OptionType {
     value: string;
     label: string;
@@ -36,11 +45,33 @@ const ContextMenu = ({
   const [selectedPlaylist, setSelectedPlaylist] = useState<OptionType | null>(
     null
   );
-  const filteredSongs = artist
-    ? songs.filter((song) => song.songData.artist === artist)
-    : songs;
-  function handlePlay() {
-    console.log("Playing song: ", "ass");
+
+  function handleRemove() {
+    const playlistName = currentPlaylist;
+    let selectedSongs = [];
+    if (artist) {
+      selectedSongs = songs.filter(
+        (song) =>
+          song.songData.artist?.toLocaleLowerCase() === artist &&
+          (album ? song.songData.album === album : true)
+      );
+    } else if (album) {
+      selectedSongs = songs.filter((song) => song.songData.album == album);
+    } else {
+      selectedSongs = [songs[index]];
+    }
+    console.log("Selected songs ", selectedSongs);
+    selectedSongs.forEach((song) => {
+      const playlistExists = song.playlists.includes(playlistName);
+      console.log(playlistExists);
+      if (playlistExists) {
+        song.playlists = song.playlists.filter(
+          (playlist) => playlist !== playlistName
+        );
+      }
+    });
+    console.log("asss");
+    onSongsRemoved();
     onClose();
   }
   console.log(artist);
@@ -50,21 +81,28 @@ const ContextMenu = ({
       return;
     }
     const playlistName = selectedOption.value;
-    const selectedSongs = artist
-      ? songs.filter(
-          (song) => song.songData.artist?.toLocaleLowerCase() === artist
-        )
-      : [songs[index]];
+    let selectedSongs = [];
+    if (artist) {
+      selectedSongs = songs.filter(
+        (song) =>
+          song.songData.artist?.toLocaleLowerCase() === artist &&
+          (album ? song.songData.album === album : true)
+      );
+    } else if (album) {
+      selectedSongs = songs.filter((song) => song.songData.album == album);
+    } else {
+      selectedSongs = [songs[index]];
+    }
     console.log("Selected songs ", selectedSongs);
     selectedSongs.forEach((song) => {
       const playlistExists = song.playlists.includes(playlistName);
       if (!playlistExists) {
         song.playlists.push(playlistName);
       }
-      console.log("Adding song to playlist: ", song.songData);
     });
     onClose();
   }
+  console.log(songs);
   const options = playlists.map((playlist) => ({
     value: playlist.name,
     label: playlist.name,
@@ -82,9 +120,9 @@ const ContextMenu = ({
         zIndex: 1,
       }}
     >
-      <div className="menu-item" onClick={handlePlay}>
-        Play
-      </div>
+      <button className="menu-item" onClick={() => handleRemove()}>
+        Remove from playlist
+      </button>
 
       <div className="menu-item">
         <Select options={options} onChange={handleSelectChange} />
@@ -95,6 +133,7 @@ const ContextMenu = ({
 function mapStateToProps(state: AppState) {
   return {
     playlists: state.audio.playlists,
+    currentPlaylist: state.audio.currentPlaylist,
   };
 }
 export default connect(mapStateToProps, null)(ContextMenu);

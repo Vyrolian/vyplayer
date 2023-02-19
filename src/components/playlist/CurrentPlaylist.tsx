@@ -22,7 +22,7 @@ const CurrentPlaylist = ({
   currentPlaylist,
   playlists,
 }: CurrentPlaylist) => {
-  console.log("Playlist component re-rendered");
+  // console.log("Playlist component re-rendered");
   const dispatch = useDispatch();
 
   function handleSelectSong(index: number) {
@@ -73,12 +73,19 @@ const CurrentPlaylist = ({
       console.log("check");
     }
 
-    console.log(data);
-    console.log(storedData);
+    //console.log(data);
+    //  console.log(storedData);
   }, []);
   localStorage.clear();
-
+  const [displayByArtist, setDisplayByArtist] = useState(false);
   // FILTER
+  const [songRemoved, setSongRemoved] = useState<boolean>(false);
+  function handleSongsRemoved() {
+    setSongRemoved((prevSongRemoved) => !prevSongRemoved);
+    // update the playlist state here
+    // this will trigger the useEffect
+    console.log("ass)");
+  }
   useEffect(() => {
     let filtered = data.songs.sort((a, b) => {
       // if artist is not defined, move the song to the top
@@ -109,13 +116,11 @@ const CurrentPlaylist = ({
     filtered = filtered.filter(
       (song) => song.playlists && song.playlists.includes(currentPlaylist)
     );
-    setFiltered(filtered);
-  }, [data, currentPlaylist]);
+    setFiltered((prevFiltered) => filtered);
+  }, [data, currentPlaylist, songRemoved]);
   //
 
-  console.log(filtered);
-
-  const [displayByArtist, setDisplayByArtist] = useState(false);
+  console.log("FILTERED SONGS", filtered);
 
   const artists = Array.from(
     new Set(
@@ -181,7 +186,9 @@ const CurrentPlaylist = ({
   function handleCloseContextMenu() {
     setContextMenu(null);
   }
-
+  useEffect(() => {
+    console.log(filtered);
+  }, [displayByArtist]);
   return (
     <div style={{ height: "1200px", overflowY: "auto" }}>
       <div>
@@ -193,6 +200,7 @@ const CurrentPlaylist = ({
             onClose={handleCloseContextMenu}
             songs={filtered}
             artist={contextMenu.artist}
+            onSongsRemoved={handleSongsRemoved}
           />
         )}
 
@@ -213,17 +221,19 @@ const CurrentPlaylist = ({
               const artistStartIndex = startIndex;
               startIndex += artistSongs.length;
               return (
-                <div
-                  onContextMenu={(event) =>
-                    handleContextMenu(event, index, artist)
-                  }
-                >
+                <div>
+                  <button
+                    onClick={(event) => handleContextMenu(event, index, artist)}
+                  >
+                    ASS WE CANt
+                  </button>
                   <Artist
                     key={index}
                     data={data}
                     artist={artist}
                     startIndex={artistStartIndex}
                     artistSongs={artistSongs}
+                    filtered={filtered}
                   />
                 </div>
               );
