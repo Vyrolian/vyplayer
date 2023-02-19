@@ -16,31 +16,53 @@ type MenuProps = {
     playlists: string[];
   }[];
   playlists: Playlist;
+  artist?: string;
 };
 
-const ContextMenu = ({ x, y, onClose, index, songs, playlists }: MenuProps) => {
+const ContextMenu = ({
+  x,
+  y,
+  onClose,
+  index,
+  songs,
+  playlists,
+  artist,
+}: MenuProps) => {
   interface OptionType {
     value: string;
     label: string;
   }
-
+  console.log("Context menu songs:", songs);
   const [selectedPlaylist, setSelectedPlaylist] = useState<OptionType | null>(
     null
   );
-
+  const filteredSongs = artist
+    ? songs.filter((song) => song.songData.artist === artist)
+    : songs;
   function handlePlay() {
     console.log("Playing song: ", "ass");
     onClose();
   }
-
+  console.log(artist);
   function handleSelectChange(selectedOption: OptionType | null) {
     setSelectedPlaylist(selectedOption);
-    const song = songs[index];
-    const playlistExists = song.playlists.includes(selectedOption?.value ?? "");
-    if (!playlistExists) {
-      song.playlists.push(selectedOption?.value ?? "");
+    if (!selectedOption) {
+      return;
     }
-    console.log("Adding song to playlist: ", song.songData);
+    const playlistName = selectedOption.value;
+    const selectedSongs = artist
+      ? songs.filter(
+          (song) => song.songData.artist?.toLocaleLowerCase() === artist
+        )
+      : [songs[index]];
+    console.log("Selected songs ", selectedSongs);
+    selectedSongs.forEach((song) => {
+      const playlistExists = song.playlists.includes(playlistName);
+      if (!playlistExists) {
+        song.playlists.push(playlistName);
+      }
+      console.log("Adding song to playlist: ", song.songData);
+    });
     onClose();
   }
   const options = playlists.map((playlist) => ({
