@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { createContext, memo, useEffect, useRef, useState } from "react";
 import testmp3 from "./test.mp3";
 import { Provider, useSelector } from "react-redux";
 import audioReducer from "./reducers/audio/audio";
@@ -8,18 +8,20 @@ import { AppState } from "../types/AppState";
 import CurrentPlaylist from "./components/playlist/CurrentPlaylist";
 import { IElectronAPI } from "./renderer";
 import { ShortcutTags, Tags } from "jsmediatags/types";
-import { Data } from "../types/songMetadata";
+import { AlbumArtworks, Data, FilteredSongs } from "../types/songMetadata";
 import SongMetadata from "./components/audio/audiocomponents/SongMetadata";
 import PlaylistMenu from "./components/playlist/menu/PlaylistMenu";
 import { useDispatch } from "react-redux";
-
+import { filteredSongs } from "./components/functions/playlist/sorting/filteredSongs";
+var jsmediatags = window.jsmediatags;
+//console.log(jsmediatags);
 const rootReducer = combineReducers({
   audio: audioReducer,
 });
 const store = configureStore({
   reducer: rootReducer,
 });
-
+const DataContext = createContext<AlbumArtworks>([]);
 function App() {
   if (navigator.userAgent.indexOf("Electron") > -1) {
     console.log("Running in an Electron app!");
@@ -29,9 +31,6 @@ function App() {
   const [data, setData] = useState<Data>({ albumArtworks: [], songs: [] });
   function handleOpenFile() {
     window.electronAPI.showOpenDialog();
-    window.electronAPI.on("on-file-select", (data: any) => {
-      // console.log(data);
-    });
 
     window.electronAPI.on("select-path", (data: Data) => {
       setData((prevData) => ({
@@ -60,19 +59,24 @@ function App() {
       }));
     });
   }
+  let filtered = filteredSongs(data);
 
   let src = "";
 
   return (
     <Provider store={store}>
-      <button onClick={handleOpenFile}>Open</button>
+      <DataContext.Provider value={data.albumArtworks}>
+        <div></div>
+        <button onClick={handleOpenFile}>Open</button>
 
-      <AudioPlayer data={data} />
-      <SongMetadata data1={data} />
-      <PlaylistMenu />
-      <CurrentPlaylist data={data} />
+        <AudioPlayer filteredSongs={filtered} />
+        <SongMetadata data1={data} />
+        <PlaylistMenu />
+        <CurrentPlaylist filteredSongs={filtered} />
+      </DataContext.Provider>
     </Provider>
   );
 }
 
 export default memo(App);
+export { DataContext };

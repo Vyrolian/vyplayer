@@ -1,7 +1,7 @@
 import { ShortcutTags } from "jsmediatags/types";
 import React, { memo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Data } from "../../../../types/songMetadata";
+import { Data, FilteredSongs } from "../../../../types/songMetadata";
 import {
   setCurrentSong,
   setCurrentSongIndex,
@@ -9,29 +9,17 @@ import {
 import Album from "./Album";
 import Select from "react-select";
 import ContextMenu from "../ContextMenu";
-type artistSongs = {
-  artistSongs: {
-    songData: ShortcutTags;
-    filePath: string;
-  }[];
-};
+import { SetContextMenu } from "../../../../types/playlist/ContextMenu";
+import { extractAlbums } from "../../functions/playlist/extract/extractAlbums";
+
 interface ArtistProps {
-  data: Data;
   artist: string | undefined;
-  artistSongs: {
-    songData: ShortcutTags;
-    filePath: string;
-  }[];
+  artistSongs: FilteredSongs;
   startIndex: number;
-  filtered: {
-    songData: ShortcutTags;
-    filePath: string;
-    playlists: string[];
-  }[];
+  filtered: FilteredSongs;
 }
 
 const Artist: React.FC<ArtistProps> = ({
-  data,
   artist,
   artistSongs,
   startIndex,
@@ -41,22 +29,13 @@ const Artist: React.FC<ArtistProps> = ({
   console.log(filtered);
   let albums: any[] = [];
   const [showAlbums, setShowAlbums] = useState(false);
-  albums = Array.from(new Set(artistSongs.map((song) => song.songData.album)));
-  document.addEventListener("contextmenu", (event) => {
-    event.preventDefault();
+  albums = extractAlbums(artistSongs);
 
-    // console.log(x);
-  });
+  // console.log(x);
   console.log(artist);
   console.log(albums);
   let albumIndex = startIndex;
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    index: number;
-    artist: string | undefined;
-    album: string | undefined;
-  } | null>(null);
+  const [contextMenu, setContextMenu] = useState<SetContextMenu | null>(null);
   console.log(contextMenu);
   function handleContextMenu(
     event: React.MouseEvent,
@@ -85,7 +64,7 @@ const Artist: React.FC<ArtistProps> = ({
           y={contextMenu.y}
           index={contextMenu.index}
           onClose={handleCloseContextMenu}
-          songs={data.songs}
+          songs={filtered}
           artist={contextMenu.artist}
           album={contextMenu.album}
           onSongsRemoved={() => {}}
@@ -113,11 +92,10 @@ const Artist: React.FC<ArtistProps> = ({
                   handleContextMenu(event, startIndex, artist, album)
                 }
               >
-                ASS WE CAN
+                CONTEXTMENU
               </button>
               <Album
                 key={album}
-                data={data}
                 album={album}
                 startIndex={startIndex}
                 artistSongs={artistSongs}

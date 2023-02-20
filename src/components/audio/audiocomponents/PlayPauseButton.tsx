@@ -4,11 +4,13 @@ import { AppState } from "../../../../types/AppState";
 import { play, pause } from "../../../actions/audio/audio";
 import "./PlayPauseButton.css";
 import { updateSongProgress } from "../../../actions/audio/updateSongProgress";
-import { Howl } from "howler";
+
 import {
   setCurrentSong,
   setCurrentSongIndex,
 } from "../../../actions/audio/setSong";
+
+// import { progress } from "../../../constants/audio/audioProgress";
 
 type PlayPauseButtonProps = {
   isPlaying: boolean;
@@ -18,7 +20,7 @@ type PlayPauseButtonProps = {
   nextSong: string;
   previousSong: string;
   currentSong: string;
-  progress: number;
+  storeProgress: number;
   currentSongIndex: number;
 };
 function PlayPauseButton({
@@ -29,7 +31,7 @@ function PlayPauseButton({
   nextSong,
   previousSong,
   currentSong,
-  progress,
+  storeProgress,
   currentSongIndex,
 }: PlayPauseButtonProps) {
   const dispatch = useDispatch();
@@ -40,9 +42,9 @@ function PlayPauseButton({
     } else {
       audioElement.pause();
     }
-
     const updateProgress = () => {
-      const progress = (audioElement.currentTime / audioElement.duration) * 100;
+      const progress =
+        (audioElement?.currentTime / audioElement?.duration) * 100;
       dispatch(updateSongProgress(progress));
     };
     audioElement.addEventListener("timeupdate", updateProgress);
@@ -54,24 +56,23 @@ function PlayPauseButton({
     } else {
       play();
     }
-    console.log(nextSong);
   };
+  console.log(isPlaying);
   //console.log(progress);
   const handleNext = () => {
-    dispatch(setCurrentSong(nextSong));
     dispatch(setCurrentSongIndex(currentSongIndex + 1));
-    console.log(nextSong);
+    dispatch(setCurrentSong(nextSong));
   };
   if (audioElement)
     audioElement.onended = () => {
       console.log(nextSong);
-      dispatch(setCurrentSong(nextSong));
       dispatch(setCurrentSongIndex(currentSongIndex + 1));
+      dispatch(setCurrentSong(nextSong));
     };
   const handlePrevious = () => {
-    if (progress < 10 && currentSong != previousSong) {
+    if (storeProgress < 10 && currentSong != previousSong) {
       dispatch(setCurrentSong(previousSong));
-      dispatch(setCurrentSongIndex(currentSongIndex - 1));
+      // dispatch(setCurrentSongIndex(currentSongIndex - 1));
     } else {
       dispatch(updateSongProgress(0));
       audioElement.currentTime = 0;
@@ -96,7 +97,7 @@ const mapStateToProps = (state: AppState) => ({
   nextSong: state.audio.nextSong,
   previousSong: state.audio.previousSong,
   currentSong: state.audio.currentSong,
-  progress: state.audio.progress,
+  storeProgress: state.audio.progress,
   currentSongIndex: state.audio.currentSongIndex,
 });
 

@@ -8,3 +8,12 @@ export type Data = {
   }[];
   albumArtworks: Array<{ album: string; picture: PictureType }>;
 };
+export type FilteredSongs = {
+  songData: ShortcutTags;
+  filePath: string;
+  playlists: string[];
+}[];
+export type AlbumArtworks = {
+  album: string;
+  picture: PictureType;
+}[];

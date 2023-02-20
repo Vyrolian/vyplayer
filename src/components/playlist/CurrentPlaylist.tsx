@@ -1,27 +1,35 @@
 import { PictureType, ShortcutTags, Tags, TagType } from "jsmediatags/types";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import {
   setCurrentSong,
   setCurrentSongIndex,
 } from "../../actions/audio/setSong";
-import { Data } from "../../../types/songMetadata";
+import { Data, FilteredSongs } from "../../../types/songMetadata";
 import { AppState } from "../../../types/AppState";
 import Artist from "./playlistcomponents/Artist";
 import { Playlist } from "../../../types/playlist/SetPlaylists";
+import { SetContextMenu } from "../../../types/playlist/ContextMenu";
 import Select from "react-select";
 import ContextMenu from "./ContextMenu";
+import { filteredSongs } from "../functions/playlist/sorting/filteredSongs";
+import { DataContext } from "../../App";
+import { extractUniqueArtist } from "../functions/playlist/extract/extractUniqueArtist";
+
 type CurrentPlaylist = {
-  data: Data;
   currentPlaylist: string;
   playlists: Playlist;
+  filteredSongs: FilteredSongs;
 };
 
 const CurrentPlaylist = ({
-  data,
   currentPlaylist,
   playlists,
+  filteredSongs,
 }: CurrentPlaylist) => {
+  const data = useContext(DataContext);
+  console.log(data);
+  console.log(filteredSongs);
   // console.log("Playlist component re-rendered");
   const dispatch = useDispatch();
 
@@ -49,7 +57,7 @@ const CurrentPlaylist = ({
   >([]);
 
   // LOCAL STORAGE
-  useEffect(() => {
+  /* useEffect(() => {
     if (
       Array.isArray(data.songs) &&
       Array.isArray(data.albumArtworks) &&
@@ -76,7 +84,7 @@ const CurrentPlaylist = ({
     //console.log(data);
     //  console.log(storedData);
   }, []);
-  localStorage.clear();
+  localStorage.clear(); */
   const [displayByArtist, setDisplayByArtist] = useState(false);
   // FILTER
   const [songRemoved, setSongRemoved] = useState<boolean>(false);
@@ -84,65 +92,19 @@ const CurrentPlaylist = ({
     setSongRemoved((prevSongRemoved) => !prevSongRemoved);
     // update the playlist state here
     // this will trigger the useEffect
-    console.log("ass)");
   }
   useEffect(() => {
-    let filtered = data.songs.sort((a, b) => {
-      // if artist is not defined, move the song to the top
-      if (!a.songData.artist) return -1;
-      if (!b.songData.artist) return 1;
-
-      // convert artist names to lowercase for comparison
-      const aArtist = a.songData.artist.toLowerCase();
-      const bArtist = b.songData.artist.toLowerCase();
-
-      // if the artist names are the same or one starts with the other + "/"
-      if (
-        aArtist === bArtist ||
-        bArtist.startsWith(aArtist + "/") ||
-        aArtist.startsWith(bArtist + "/")
-      ) {
-        // if album is not defined, move the song to the top
-        if (!a.songData.album) return -1;
-        if (!b.songData.album) return 1;
-        // compare the album names
-        return a.songData.album.localeCompare(b.songData.album);
-      }
-      if (aArtist === undefined) {
-      }
-      // compare the artist names
-      return aArtist.localeCompare(bArtist);
-    });
-    filtered = filtered.filter(
+    filteredSongs = filteredSongs.filter(
       (song) => song.playlists && song.playlists.includes(currentPlaylist)
     );
-    setFiltered((prevFiltered) => filtered);
-  }, [data, currentPlaylist, songRemoved]);
+
+    setFiltered((prevFiltered) => filteredSongs);
+  }, [filteredSongs, currentPlaylist, songRemoved]);
   //
 
   console.log("FILTERED SONGS", filtered);
 
-  const artists = Array.from(
-    new Set(
-      filtered.map((song) => {
-        return (
-          song.songData.artist &&
-          song.songData.artist.split("/")[0].toLowerCase()
-        );
-      })
-    )
-  );
-
-  function handleAddToPlaylist(index: number, playlistName: string) {
-    const song = data.songs[index];
-    if (!song.playlists) {
-      song.playlists = [playlistName];
-    } else if (!song.playlists.includes(playlistName)) {
-      song.playlists.push(playlistName);
-    }
-    const newData = { ...data };
-    setData(newData);
-  }
+  const artists = extractUniqueArtist(filtered);
 
   // CONTEXT MENU
   const options = playlists.map((playlist) => ({
@@ -157,12 +119,7 @@ const CurrentPlaylist = ({
     const y = event.clientY;
     // show the context menu at (x, y)
   });
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    index: number;
-    artist: string | undefined;
-  } | null>(null);
+  const [contextMenu, setContextMenu] = useState<SetContextMenu | null>(null);
   console.log(contextMenu);
   function handleContextMenu(
     event: React.MouseEvent,
@@ -175,6 +132,7 @@ const CurrentPlaylist = ({
       y: event.clientY,
       index: index,
       artist: artist,
+      album: undefined,
     });
     console.log(event.clientX);
   }
@@ -225,11 +183,10 @@ const CurrentPlaylist = ({
                   <button
                     onClick={(event) => handleContextMenu(event, index, artist)}
                   >
-                    ASS WE CANt
+                    CONTEXTMENU
                   </button>
                   <Artist
                     key={index}
-                    data={data}
                     artist={artist}
                     startIndex={artistStartIndex}
                     artistSongs={artistSongs}
@@ -267,14 +224,11 @@ const CurrentPlaylist = ({
     </div>
   );
 };
-const mapDispatchToProps = {
-  setCurrentSong,
-  setCurrentSongIndex,
-};
+
 function mapStateToProps(state: AppState) {
   return {
     currentPlaylist: state.audio.currentPlaylist,
     playlists: state.audio.playlists,
   };
 }
-export default connect(mapStateToProps, mapDispatchToProps)(CurrentPlaylist);
+export default connect(mapStateToProps, null)(CurrentPlaylist);

@@ -8,7 +8,7 @@ import { pause, play } from "../../actions/audio/audio";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
 import { AppState } from "../../../types/AppState";
-import { Data } from "../../../types/songMetadata";
+import { Data, FilteredSongs } from "../../../types/songMetadata";
 import { setUseProxies } from "immer";
 import { set } from "immer/dist/internal";
 import {
@@ -18,34 +18,47 @@ import {
   setPreviousSong,
 } from "../../actions/audio/setSong";
 
+import { filteredByCurrentPlaylist } from "../functions/playlist/filteredByCurrentPlaylist";
+import { audioElement } from "../../constants/audio/audioElement";
+
 //import test from "./test.mp3";
 type AudioPlayerProps = {
   play: typeof play;
   pause: typeof pause;
   setVolume: typeof setVolume;
-  data: Data;
+  filteredSongs: FilteredSongs;
   currentSong: string;
   currentSongIndex: number;
+  currentPlaylist: string;
 };
 
 function AudioPlayer({
-  data,
+  filteredSongs,
   play,
   pause,
   currentSong,
   currentSongIndex,
+  currentPlaylist,
 }: AudioPlayerProps) {
+  const [filtered, setFiltered] = useState<FilteredSongs>([]);
+  useEffect(() => {
+    filteredSongs = filteredByCurrentPlaylist(filteredSongs, currentPlaylist);
+    setFiltered((prevFiltered) => filteredSongs);
+    console.log(currentPlaylist);
+  }, [currentPlaylist]);
+
+  console.log(currentSong);
+  console.log(filteredSongs);
   const storedVolume = localStorage.getItem("volume");
   let defaultVolume: number;
-  if (storedVolume) {
-    defaultVolume = parseFloat(storedVolume);
-  } else {
-    defaultVolume = 0.1;
-  }
+  storedVolume
+    ? (defaultVolume = parseFloat(storedVolume))
+    : (defaultVolume = 0.1);
+
+  const dispatch = useDispatch();
   const audioElement = document.getElementById(
     "audio-element"
   ) as HTMLAudioElement;
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!audioElement) return;
@@ -59,9 +72,10 @@ function AudioPlayer({
 
       //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
 
-      if (nextSongIndex >= data.songs.length) {
+      if (nextSongIndex >= filtered.length) {
+        console.log(nextSongIndex);
         nextSongIndex = 0;
-        dispatch(setCurrentSongIndex(0));
+        dispatch(setCurrentSongIndex(-1));
       }
       if (currentSongIndex == 0) {
         previousSongIndex = 0;
@@ -75,9 +89,9 @@ function AudioPlayer({
           nextSongIndex +
           " - Next Index "
       );
-      if (previousSongIndex >= 0 && previousSongIndex < data.songs.length) {
-        dispatch(setPreviousSong(data.songs[previousSongIndex].filePath));
-        dispatch(setNextSong(data.songs[nextSongIndex].filePath));
+      if (previousSongIndex >= 0 && previousSongIndex < filtered.length) {
+        dispatch(setPreviousSong(filtered[previousSongIndex].filePath));
+        dispatch(setNextSong(filtered[nextSongIndex].filePath));
       }
 
       play();
@@ -102,6 +116,7 @@ function mapStateToProps(state: AppState) {
     volume: state.audio.volume,
     currentSong: state.audio.currentSong,
     currentSongIndex: state.audio.currentSongIndex,
+    currentPlaylist: state.audio.currentPlaylist,
   };
 }
 

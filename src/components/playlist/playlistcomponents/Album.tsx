@@ -1,16 +1,17 @@
 import { ShortcutTags } from "jsmediatags/types";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Data } from "../../../../types/songMetadata";
 import {
   setCurrentSong,
   setCurrentSongIndex,
 } from "../../../actions/audio/setSong";
+import { DataContext } from "../../../App";
 import ContextMenu from "../ContextMenu";
-
+import { extractAlbums } from "../../functions/playlist/extract/extractAlbums";
 interface AlbumProps {
   album: string | undefined;
-  data: Data;
+
   artistSongs: {
     songData: ShortcutTags;
     filePath: string;
@@ -24,7 +25,8 @@ interface AlbumProps {
 }
 
 const Album: React.FC<AlbumProps> = React.memo(
-  ({ data, album, startIndex, artistSongs, filtered }) => {
+  ({ album, startIndex, artistSongs, filtered }) => {
+    const albumArtworks = useContext(DataContext);
     const dispatch = useDispatch();
     function handleSelectSong(index: number) {
       dispatch(setCurrentSongIndex(index));
@@ -33,7 +35,7 @@ const Album: React.FC<AlbumProps> = React.memo(
     }
     let imageSrc = "No picture";
     // console.log(album);
-    data.albumArtworks.map((albumArtwork) => {
+    albumArtworks.map((albumArtwork) => {
       if (
         albumArtwork.album === album &&
         albumArtwork.picture &&
@@ -89,7 +91,7 @@ const Album: React.FC<AlbumProps> = React.memo(
             y={contextMenu.y}
             index={contextMenu.index}
             onClose={handleCloseContextMenu}
-            songs={data.songs}
+            songs={filtered}
             artist={contextMenu.artist}
             album={contextMenu.album}
             onSongsRemoved={() => {}}

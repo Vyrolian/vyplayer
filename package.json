@@ -17,7 +17,6 @@
     "cross-env": "^7.0.3",
     "electron": "^22.0.2",
     "howler": "^2.2.3",
-    "jsmediatags": "^3.9.7",
     "npm-run-all": "^4.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
