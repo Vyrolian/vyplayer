@@ -35,7 +35,7 @@ function ProgressBar({ progress }: ProgressBarProps) {
     ? `${durationMinutes}:${durationSeconds.toFixed(0).padStart(2, "0")}`
     : sec;
   return (
-    <div>
+    <div className="progress-containter">
       <div className="progress-bar" onClick={onProgressBarClick}>
         <div className="progress" style={{ width: `${progress}%` }}></div>
       </div>

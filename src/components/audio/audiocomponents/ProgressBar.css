@@ -1,12 +1,20 @@
-.body {
+.progress-container {
   display: flex;
+  margin: 0 auto; /* this will center the page */
+  width: 960px; /*  use your width here */
+  flex: 1;
+  padding: 0 1%;
+}
+.progress-time {
+  margin-left: 1%;
 }
 .progress-bar {
-  width: 30%;
   height: 10px;
+  width: 98%;
   background-color: #888;
   cursor: pointer;
   position: relative;
+  margin: 0 auto;
 }
 
 .progress {

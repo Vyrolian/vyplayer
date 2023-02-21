@@ -79,7 +79,7 @@ function PlayPauseButton({
     }
   };
   return (
-    <div>
+    <div className="container">
       <button onClick={handlePrevious} className="button">
         {"Previous"}
       </button>

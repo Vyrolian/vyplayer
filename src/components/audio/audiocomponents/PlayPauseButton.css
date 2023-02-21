@@ -1,3 +1,7 @@
+.container {
+  display: flex;
+  justify-content: center;
+}
 .button {
   background-color: rgb(250, 10, 122);
   border: none;
