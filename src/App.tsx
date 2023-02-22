@@ -69,8 +69,30 @@ function App() {
         <div></div>
         <button onClick={handleOpenFile}>Open</button>
 
-        <AudioPlayer filteredSongs={filtered} />
-        <SongMetadata data1={data} />
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "fixed",
+              bottom: "23.5%",
+              left: "0",
+              right: "0",
+              height: "10%",
+            }}
+          >
+            {data && <SongMetadata data1={data} />}
+          </div>
+          <div
+            style={{
+              position: "fixed",
+              bottom: "0",
+              left: "0",
+              right: "0",
+              height: "15%",
+            }}
+          >
+            <AudioPlayer filteredSongs={filtered} />
+          </div>
+        </div>
         <PlaylistMenu />
         <CurrentPlaylist filteredSongs={filtered} />
       </DataContext.Provider>

@@ -5,8 +5,15 @@
   flex: 1;
   padding: 0 1%;
 }
-.progress-time {
+.progress-time-container {
+  display: flex;
+}
+.progress-time-left {
   margin-left: 1%;
+}
+.progress-time-right {
+  margin-left: auto;
+  margin-right: 1%;
 }
 .progress-bar {
   height: 10px;

@@ -39,8 +39,9 @@ function ProgressBar({ progress }: ProgressBarProps) {
       <div className="progress-bar" onClick={onProgressBarClick}>
         <div className="progress" style={{ width: `${progress}%` }}></div>
       </div>
-      <div className="progress-time">
-        {currentTimeDisplay} / {durationDisplay}
+      <div className="progress-time-container">
+        <div className="progress-time-left">{currentTimeDisplay}</div>
+        <div className="progress-time-right">{durationDisplay}</div>
       </div>
     </div>
   );
