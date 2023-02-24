@@ -6,7 +6,6 @@ export type Data = {
     filePath: string;
     playlists: string[];
   }[];
-  albumArtworks: Array<{ album: string; picture: PictureType }>;
 };
 export type FilteredSongs = {
   songData: ShortcutTags;

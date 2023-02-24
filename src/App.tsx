@@ -21,27 +21,19 @@ const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
 });
-const DataContext = createContext<AlbumArtworks>([]);
+
 function App() {
   if (navigator.userAgent.indexOf("Electron") > -1) {
     console.log("Running in an Electron app!");
   } else {
     console.log("Not running in an Electron app.");
   }
-  const [data, setData] = useState<Data>({ albumArtworks: [], songs: [] });
+  const [data, setData] = useState<Data>({ songs: [] });
   function handleOpenFile() {
     window.electronAPI.showOpenDialog();
 
     window.electronAPI.on("select-path", (data: Data) => {
       setData((prevData) => ({
-        albumArtworks: [
-          ...prevData.albumArtworks,
-          ...data.albumArtworks.filter((newArtwork) =>
-            prevData.albumArtworks.every(
-              (existingArtwork) => existingArtwork.album !== newArtwork.album
-            )
-          ),
-        ],
         songs: [
           ...prevData.songs,
           ...data.songs
@@ -65,40 +57,37 @@ function App() {
 
   return (
     <Provider store={store}>
-      <DataContext.Provider value={data.albumArtworks}>
-        <div></div>
-        <button onClick={handleOpenFile}>Open</button>
+      <div></div>
+      <button onClick={handleOpenFile}>Open</button>
 
-        <div style={{ position: "relative" }}>
-          <div
-            style={{
-              position: "fixed",
-              bottom: "23.5%",
-              left: "0",
-              right: "0",
-              height: "10%",
-            }}
-          >
-            {data && <SongMetadata data1={data} />}
-          </div>
-          <div
-            style={{
-              position: "fixed",
-              bottom: "0",
-              left: "0",
-              right: "0",
-              height: "15%",
-            }}
-          >
-            <AudioPlayer filteredSongs={filtered} />
-          </div>
+      <div style={{ position: "relative" }}>
+        <div
+          style={{
+            position: "fixed",
+            bottom: "23.5%",
+            left: "0",
+            right: "0",
+            height: "10%",
+          }}
+        >
+          {data && <SongMetadata data1={data} />}
         </div>
-        <PlaylistMenu />
-        <CurrentPlaylist filteredSongs={filtered} />
-      </DataContext.Provider>
+        <div
+          style={{
+            position: "fixed",
+            bottom: "0",
+            left: "0",
+            right: "0",
+            height: "15%",
+          }}
+        >
+          <AudioPlayer filteredSongs={filtered} />
+        </div>
+      </div>
+      <PlaylistMenu />
+      <CurrentPlaylist filteredSongs={filtered} />
     </Provider>
   );
 }
 
 export default memo(App);
-export { DataContext };

@@ -13,7 +13,7 @@ import { SetContextMenu } from "../../../types/playlist/ContextMenu";
 import Select from "react-select";
 import ContextMenu from "./ContextMenu";
 import { filteredSongs } from "../functions/playlist/sorting/filteredSongs";
-import { DataContext } from "../../App";
+
 import { extractUniqueArtist } from "../functions/playlist/extract/extractUniqueArtist";
 
 type CurrentPlaylist = {
@@ -27,8 +27,6 @@ const CurrentPlaylist = ({
   playlists,
   filteredSongs,
 }: CurrentPlaylist) => {
-  const data = useContext(DataContext);
-  console.log(data);
   console.log(filteredSongs);
   // console.log("Playlist component re-rendered");
   const dispatch = useDispatch();

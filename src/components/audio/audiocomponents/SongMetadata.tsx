@@ -11,21 +11,6 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
   let currentSongData = data1.songs.find(
     (song) => song.filePath === currentSong
   );
-  let imageSrc;
-  let albumArtwork = data1.albumArtworks.find(
-    (artwork) => artwork.album === currentSongData?.songData.album
-  );
-
-  if (albumArtwork?.picture !== undefined) {
-    const { data, format } = albumArtwork.picture;
-    let base64String = "";
-    for (let i = 0; i < data.length; i++) {
-      base64String += String.fromCharCode(data[i]);
-    }
-    imageSrc = `data:${format};base64,${window.btoa(base64String)}`;
-  } else {
-    imageSrc = "";
-  }
 
   let currentSongTitle = currentSongData?.songData.title;
   let picture = currentSongData?.songData.picture;
@@ -34,7 +19,7 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
       {currentSongTitle ? (
         <div>
           <img
-            src={imageSrc}
+            src={`media-loader://C:/test/${currentSongData?.songData.album}.jpeg`}
             style={{
               width: "150px",
             }}

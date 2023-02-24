@@ -128,9 +128,46 @@ const createWindow = (): void => {
               track: tag.tags.track,
               genre: tag.tags.genre,
             };
+            const uniquePictures = new Set();
 
-            // Only add the picture to the first song of the album
+            // Loop through the album artworks and add each unique image to the set
+            albumArtworks.forEach((artwork) => {
+              if (artwork?.picture !== undefined) {
+                const { data, format } = artwork.picture;
+                const base64String = Buffer.from(data).toString("base64");
 
+                // Check if the image is already in the set
+                if (!uniquePictures.has(artwork.album)) {
+                  uniquePictures.add(artwork.album);
+
+                  // Construct the filename using the album name
+                  const fileName = `${artwork.album}.${format.split("/")[1]}`;
+
+                  // Check if the file already exists
+                  if (fs.existsSync(`C:/test/${fileName}`)) {
+                    console.log(
+                      `Album artwork picture already exists: ${fileName}`
+                    );
+                  } else {
+                    // Write the image data to a file
+                    fs.writeFile(
+                      `C:/test/${fileName}`,
+                      base64String,
+                      "base64",
+                      (err) => {
+                        if (err) {
+                          console.error(err);
+                        } else {
+                          console.log(
+                            `Saved album artwork picture: ${fileName}`
+                          );
+                        }
+                      }
+                    );
+                  }
+                }
+              }
+            });
             songs.push({
               filePath: path.resolve(directoryPath, filePath),
               songData,
@@ -145,7 +182,6 @@ const createWindow = (): void => {
               console.log(albumArtworks);
               event.reply("select-path", {
                 songs,
-                albumArtworks,
               });
             }
           },
