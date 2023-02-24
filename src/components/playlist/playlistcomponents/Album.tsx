@@ -62,7 +62,8 @@ const Album: React.FC<AlbumProps> = React.memo(
     function handleCloseContextMenu() {
       setContextMenu(null);
     }
-
+    let picture;
+    if (album) picture = album.replace(/[<>:"\/\\|?*\x00-\x1F]/g, "_");
     // console.log(imageSrc);
     let counter = startIndex;
     const [showSongs, setShowSongs] = useState(false);
@@ -88,7 +89,7 @@ const Album: React.FC<AlbumProps> = React.memo(
         </h2>
         <div className="album-artwork">
           <img
-            src={`media-loader://C:/test/${album}.jpeg`}
+            src={`media-loader://C:/test/${picture}.jpeg`}
             style={{ width: 150 }}
             alt={album}
           />

@@ -104,7 +104,7 @@ const ContextMenu = ({
   }
   console.log(songs);
   const options = playlists.map((playlist) => ({
-    value: playlist.name,
+    value: playlist.id,
     label: playlist.name,
   }));
   return (

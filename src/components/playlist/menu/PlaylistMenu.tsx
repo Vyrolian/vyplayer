@@ -54,7 +54,7 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
       <ul>
         {playlists.map((playlist) => (
           <li key={playlist.id}>
-            <button onClick={() => handleSelectPlaylist(playlist.name)}>
+            <button onClick={() => handleSelectPlaylist(playlist.id)}>
               {playlist.name}
             </button>
             {playlist.name !== "Library" && (

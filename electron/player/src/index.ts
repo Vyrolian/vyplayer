@@ -128,46 +128,9 @@ const createWindow = (): void => {
               track: tag.tags.track,
               genre: tag.tags.genre,
             };
-            const uniquePictures = new Set();
 
             // Loop through the album artworks and add each unique image to the set
-            albumArtworks.forEach((artwork) => {
-              if (artwork?.picture !== undefined) {
-                const { data, format } = artwork.picture;
-                const base64String = Buffer.from(data).toString("base64");
 
-                // Check if the image is already in the set
-                if (!uniquePictures.has(artwork.album)) {
-                  uniquePictures.add(artwork.album);
-
-                  // Construct the filename using the album name
-                  const fileName = `${artwork.album}.${format.split("/")[1]}`;
-
-                  // Check if the file already exists
-                  if (fs.existsSync(`C:/test/${fileName}`)) {
-                    console.log(
-                      `Album artwork picture already exists: ${fileName}`
-                    );
-                  } else {
-                    // Write the image data to a file
-                    fs.writeFile(
-                      `C:/test/${fileName}`,
-                      base64String,
-                      "base64",
-                      (err) => {
-                        if (err) {
-                          console.error(err);
-                        } else {
-                          console.log(
-                            `Saved album artwork picture: ${fileName}`
-                          );
-                        }
-                      }
-                    );
-                  }
-                }
-              }
-            });
             songs.push({
               filePath: path.resolve(directoryPath, filePath),
               songData,
@@ -175,6 +138,52 @@ const createWindow = (): void => {
 
             filesProcessed++;
             if (filesProcessed === totalFiles) {
+              const uniquePictures = new Set();
+              albumArtworks.forEach((artwork) => {
+                if (artwork?.picture !== undefined) {
+                  const { data, format } = artwork.picture;
+                  const base64String = Buffer.from(data).toString("base64");
+
+                  // Check if the image is already in the set
+                  if (!uniquePictures.has(artwork.album)) {
+                    uniquePictures.add(artwork.album);
+
+                    // Construct the filename using the album name
+                    const albumName = artwork.album.replace(
+                      /[<>:"\/\\|?*\x00-\x1F]/g,
+                      "_"
+                    );
+                    const fileName = `${albumName}.jpeg`;
+                    const filePath = `C:/test/${fileName}`;
+                    // Check if the file already exists
+                    if (fs.existsSync(filePath)) {
+                      console.log(
+                        `Album artwork picture already exists: ${fileName}`
+                      );
+                    } else {
+                      // Write the image data to a file
+                      const dirPath = path.dirname(filePath);
+                      if (!fs.existsSync(dirPath)) {
+                        fs.mkdirSync(dirPath, { recursive: true });
+                      }
+                      fs.writeFile(
+                        `C:/test/${fileName}`,
+                        base64String,
+                        "base64",
+                        (err) => {
+                          if (err) {
+                            console.error(err);
+                          } else {
+                            console.log(
+                              `Saved album artwork picture: ${fileName}`
+                            );
+                          }
+                        }
+                      );
+                    }
+                  }
+                }
+              });
               songs.sort(
                 (a, b) =>
                   parseInt(a.songData.track) - parseInt(b.songData.track)

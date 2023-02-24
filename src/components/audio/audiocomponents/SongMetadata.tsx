@@ -13,13 +13,21 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
   );
 
   let currentSongTitle = currentSongData?.songData.title;
-  let picture = currentSongData?.songData.picture;
+  let picture;
+  if (currentSongData?.songData.album)
+    picture = currentSongData?.songData.album.replace(
+      /[<>:"\/\\|?*\x00-\x1F]/g,
+      "_"
+    );
+
+  console.log(picture);
+  console.log(currentSongData?.songData.album);
   return (
     <div>
       {currentSongTitle ? (
         <div>
           <img
-            src={`media-loader://C:/test/${currentSongData?.songData.album}.jpeg`}
+            src={`media-loader://C:/test/${picture}.jpeg`}
             style={{
               width: "150px",
             }}
