@@ -11,6 +11,7 @@ export type AppState = {
   previousSong: AudioState;
   currentPlaylist: AudioState;
   playlists: AudioState;
+  deletedPlaylist: AudioState;
 };
 export type AudioState = {
   isPlaying: boolean;
@@ -23,6 +24,7 @@ export type AudioState = {
   progress: number;
   volume: number;
   playlists: Playlist;
+  deletedPlaylist: string;
 };
 
 export type PlaylistState = {

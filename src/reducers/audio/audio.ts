@@ -13,6 +13,7 @@ import {
 } from "../../../types/audio/SetSong";
 import { SetCurrentPlaylistAction } from "../../../types/playlist/SetCurrentPlaylistAction";
 import { Playlist, SetPlaylists } from "../../../types/playlist/SetPlaylists";
+import { SetDeletedPlaylist } from "../../../types/playlist/SetDeletedPlaylist";
 const initialState: AudioState = {
   isPlaying: false,
   progress: 0,
@@ -23,7 +24,8 @@ const initialState: AudioState = {
   currentTrack: {},
   currentSongIndex: 0,
   currentPlaylist: "Library",
-  playlists: [{ id: "0", name: "Library" }],
+  playlists: [{ id: "Library", name: "Library" }],
+  deletedPlaylist: "",
 };
 
 export default (
@@ -39,6 +41,7 @@ export default (
     | SetPreviousSong
     | SetCurrentPlaylistAction
     | SetPlaylists
+    | SetDeletedPlaylist
 ) => {
   switch (action.type) {
     case "PLAY":
@@ -103,6 +106,12 @@ export default (
       return {
         ...state,
         playlists: action.payload.playlists,
+      };
+    case "SET_DELETED_PLAYLIST":
+      console.log("Deleted playlist: ", action.payload.deletedPlaylist);
+      return {
+        ...state,
+        deletedPlaylist: action.payload.deletedPlaylist,
       };
     // Other cases go here
     default:

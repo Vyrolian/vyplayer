@@ -57,7 +57,7 @@ function PlayPauseButton({
       play();
     }
   };
-  console.log(isPlaying);
+  // console.log(isPlaying);
   //console.log(progress);
   const handleNext = () => {
     dispatch(setCurrentSongIndex(currentSongIndex + 1));

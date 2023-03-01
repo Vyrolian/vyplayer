@@ -42,14 +42,19 @@ function AudioPlayer({
   currentPlaylist,
 }: AudioPlayerProps) {
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
-  useEffect(() => {
-    filteredSongs = filteredByCurrentPlaylist(filteredSongs, currentPlaylist);
-    setFiltered((prevFiltered) => filteredSongs);
-    console.log(currentPlaylist);
-  }, [currentPlaylist]);
 
+  useEffect(() => {
+    let filtered;
+    filtered = filteredSongs.filter(
+      (song) => song.playlists && song.playlists.includes(currentPlaylist)
+    );
+    setFiltered(filtered);
+
+    console.log(currentPlaylist);
+  }, [currentPlaylist, filteredSongs]);
+  console.log(filtered);
   console.log(currentSong);
-  console.log(filteredSongs);
+  console.log("Filtered songs: ", filteredSongs);
   const storedVolume = localStorage.getItem("volume");
   let defaultVolume: number;
   storedVolume

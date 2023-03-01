@@ -7,6 +7,7 @@ import { setPlaylists } from "../../../actions/playlist/setPlaylists";
 import { play } from "../../../actions/audio/audio";
 import { AppState } from "../../../../types/AppState";
 import { Playlist } from "../../../../types/playlist/SetPlaylists";
+import { setDeletedPlaylist } from "../../../actions/playlist/setDeletedPlaylist";
 type PlaylistMenu = {
   playlists: Playlist;
 };
@@ -35,6 +36,7 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
   console.log(playlists);
   function deletePlaylist(id: string) {
     const updatedPlaylists = playlists.filter((playlist) => playlist.id !== id);
+    dispatch(setDeletedPlaylist(id));
     dispatch(setPlaylists(updatedPlaylists));
   }
   return (
