@@ -15,14 +15,10 @@ import { useDispatch } from "react-redux";
 import { filteredSongs } from "./components/functions/playlist/sorting/filteredSongs";
 var jsmediatags = window.jsmediatags;
 //console.log(jsmediatags);
-const rootReducer = combineReducers({
-  audio: audioReducer,
-});
-const store = configureStore({
-  reducer: rootReducer,
-});
 
 function App() {
+  const playlists = useSelector((state: AppState) => state.audio.playlists);
+  // console.log("P L A Y L I S T S ", playlists);
   if (navigator.userAgent.indexOf("Electron") > -1) {
     console.log("Running in an Electron app!");
   } else {
@@ -51,12 +47,23 @@ function App() {
       }));
     });
   }
+  useEffect(() => {
+    setData((prevData) => ({
+      ...prevData,
+      songs: prevData.songs.map((song) => ({
+        ...song,
+        playlists: song.playlists.filter((playlist) =>
+          playlists.some((storePlaylist) => storePlaylist.id === playlist)
+        ),
+      })),
+    }));
+  }, []);
   let filtered = filteredSongs(data);
-
+  // console.log(" F I L T E R E D ", filtered);
   let src = "";
 
   return (
-    <Provider store={store}>
+    <div>
       <div></div>
       <button onClick={handleOpenFile}>Open</button>
 
@@ -86,7 +93,7 @@ function App() {
       </div>
       <PlaylistMenu />
       <CurrentPlaylist filteredSongs={filtered} />
-    </Provider>
+    </div>
   );
 }
 

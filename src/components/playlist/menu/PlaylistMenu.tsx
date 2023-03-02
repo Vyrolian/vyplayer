@@ -26,6 +26,7 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
   function handleSelectPlaylist(playlistName: string) {
     dispatch(setCurrentPlaylist(playlistName));
   }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (newPlaylistName.trim() !== "") {

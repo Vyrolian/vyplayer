@@ -20,8 +20,8 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
       "_"
     );
 
-  console.log(picture);
-  console.log(currentSongData?.songData.album);
+  //console.log(picture);
+  // console.log(currentSongData?.songData.album);
   return (
     <div>
       {currentSongTitle ? (

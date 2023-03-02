@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { AppState } from "../../../../types/AppState";
-import { play, pause } from "../../../actions/audio/audio";
+import { play, pause, shuffle } from "../../../actions/audio/audio";
 import "./PlayPauseButton.css";
 import { updateSongProgress } from "../../../actions/audio/updateSongProgress";
 
@@ -16,18 +16,22 @@ type PlayPauseButtonProps = {
   isPlaying: boolean;
   play: typeof play;
   pause: typeof pause;
+  shuffle: typeof shuffle;
   audioElement: HTMLAudioElement;
   nextSong: string;
   previousSong: string;
   currentSong: string;
   storeProgress: number;
   currentSongIndex: number;
+  isShuffled: boolean;
 };
 function PlayPauseButton({
   isPlaying,
   play,
   pause,
+  shuffle,
   audioElement,
+  isShuffled,
   nextSong,
   previousSong,
   currentSong,
@@ -56,6 +60,10 @@ function PlayPauseButton({
     } else {
       play();
     }
+  };
+  const handleShuffle = () => {
+    shuffle();
+    console.log("SHUFFLED", isShuffled);
   };
   // console.log(isPlaying);
   //console.log(progress);
@@ -89,6 +97,9 @@ function PlayPauseButton({
       <button onClick={handleNext} className="button">
         {"Next"}
       </button>
+      <button onClick={handleShuffle} className="button">
+        {"Shuffle"}
+      </button>
     </div>
   );
 }
@@ -99,11 +110,13 @@ const mapStateToProps = (state: AppState) => ({
   currentSong: state.audio.currentSong,
   storeProgress: state.audio.progress,
   currentSongIndex: state.audio.currentSongIndex,
+  isShuffled: state.audio.isShuffled,
 });
 
 const mapDispatchToProps = {
   play,
   pause,
+  shuffle,
 };
 
 const PlayPauseButtonConnected = connect(

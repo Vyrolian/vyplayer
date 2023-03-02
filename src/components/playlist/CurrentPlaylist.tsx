@@ -20,14 +20,29 @@ type CurrentPlaylist = {
   currentPlaylist: string;
   playlists: Playlist;
   filteredSongs: FilteredSongs;
+  deletedPlaylist: string;
 };
 
 const CurrentPlaylist = ({
   currentPlaylist,
   playlists,
   filteredSongs,
+  deletedPlaylist,
 }: CurrentPlaylist) => {
-  console.log(filteredSongs);
+  const [updatedFilteredSongs, setUpdatedFilteredSongs] =
+    useState(filteredSongs);
+
+  useEffect(() => {
+    setUpdatedFilteredSongs(filteredSongs);
+    const updatedSongs = filteredSongs.map((song) => {
+      const playlists = song.playlists.filter(
+        (playlist) => playlist !== deletedPlaylist
+      );
+      return { ...song, playlists };
+    });
+    setUpdatedFilteredSongs(updatedSongs);
+  }, [filteredSongs, deletedPlaylist]);
+  // console.log(updatedFilteredSongs);
   // console.log("Playlist component re-rendered");
   const dispatch = useDispatch();
 
@@ -100,7 +115,7 @@ const CurrentPlaylist = ({
   }, [filteredSongs, currentPlaylist, songRemoved]);
   //
 
-  console.log("FILTERED SONGS", filtered);
+  //console.log("FILTERED SONGS", filtered);
 
   const artists = extractUniqueArtist(filtered);
 
@@ -227,6 +242,7 @@ function mapStateToProps(state: AppState) {
   return {
     currentPlaylist: state.audio.currentPlaylist,
     playlists: state.audio.playlists,
+    deletedPlaylist: state.audio.deletedPlaylist,
   };
 }
 export default connect(mapStateToProps, null)(CurrentPlaylist);

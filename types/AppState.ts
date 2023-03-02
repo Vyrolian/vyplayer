@@ -12,6 +12,7 @@ export type AppState = {
   currentPlaylist: AudioState;
   playlists: AudioState;
   deletedPlaylist: AudioState;
+  isShuffled: AudioState;
 };
 export type AudioState = {
   isPlaying: boolean;
@@ -25,6 +26,7 @@ export type AudioState = {
   volume: number;
   playlists: Playlist;
   deletedPlaylist: string;
+  isShuffled: boolean;
 };
 
 export type PlaylistState = {

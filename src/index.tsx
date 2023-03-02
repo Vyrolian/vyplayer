@@ -3,13 +3,24 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import audioReducer from "./reducers/audio/audio";
+import { Provider } from "react-redux";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+const rootReducer = combineReducers({
+  audio: audioReducer,
+});
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 

@@ -26,6 +26,7 @@ const initialState: AudioState = {
   currentPlaylist: "Library",
   playlists: [{ id: "Library", name: "Library" }],
   deletedPlaylist: "",
+  isShuffled: false,
 };
 
 export default (
@@ -54,7 +55,11 @@ export default (
         ...state,
         isPlaying: false,
       };
-
+    case "SHUFFLE":
+      return {
+        ...state,
+        isShuffled: !state.isShuffled,
+      };
     case "UPDATE_SONG_PROGRESS":
       //   console.log(action.payload.progress);
       return {

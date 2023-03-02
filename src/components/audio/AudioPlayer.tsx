@@ -31,6 +31,7 @@ type AudioPlayerProps = {
   currentSong: string;
   currentSongIndex: number;
   currentPlaylist: string;
+  isShuffled: boolean;
 };
 
 function AudioPlayer({
@@ -40,6 +41,7 @@ function AudioPlayer({
   currentSong,
   currentSongIndex,
   currentPlaylist,
+  isShuffled,
 }: AudioPlayerProps) {
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
 
@@ -48,13 +50,26 @@ function AudioPlayer({
     filtered = filteredSongs.filter(
       (song) => song.playlists && song.playlists.includes(currentPlaylist)
     );
-    setFiltered(filtered);
+    let filteredShuffle = filtered;
+    if (isShuffled) {
+      for (let i = filteredShuffle.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredShuffle[i], filteredShuffle[j]] = [
+          filteredShuffle[j],
+          filteredShuffle[i],
+        ];
+      }
+      console.log(filteredShuffle);
+      setFiltered(filteredShuffle);
+    } else {
+      setFiltered(filtered);
+    }
 
     console.log(currentPlaylist);
-  }, [currentPlaylist, filteredSongs]);
+  }, [currentPlaylist, filteredSongs, isShuffled]);
   console.log(filtered);
-  console.log(currentSong);
-  console.log("Filtered songs: ", filteredSongs);
+  // console.log(currentSong);
+  // console.log("Filtered songs: ", filteredSongs);
   const storedVolume = localStorage.getItem("volume");
   let defaultVolume: number;
   storedVolume
@@ -123,6 +138,7 @@ function mapStateToProps(state: AppState) {
     currentSong: state.audio.currentSong,
     currentSongIndex: state.audio.currentSongIndex,
     currentPlaylist: state.audio.currentPlaylist,
+    isShuffled: state.audio.isShuffled,
   };
 }
 
