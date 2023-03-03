@@ -1,6 +1,7 @@
 import {
   SetCurrentSong,
   SetCurrentSongIndex,
+  SetNewSong,
   SetNextSong,
   SetPreviousSong,
 } from "../../../types/audio/SetSong";
@@ -37,4 +38,7 @@ export function setPreviousSong(previousSong: string): SetPreviousSong {
       previousSong,
     },
   };
+}
+export function setNewSong(): SetNewSong {
+  return { type: "SET_NEW_SONG" };
 }

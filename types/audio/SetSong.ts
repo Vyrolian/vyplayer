@@ -22,3 +22,6 @@ export interface SetPreviousSong {
     previousSong: string;
   };
 }
+export type SetNewSong = {
+  type: "SET_NEW_SONG";
+};

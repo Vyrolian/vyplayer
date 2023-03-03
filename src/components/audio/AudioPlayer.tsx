@@ -3,7 +3,7 @@ import PlayPauseButton from "./audiocomponents/PlayPauseButton";
 import ProgressBar from "./audiocomponents/ProgressBar";
 import VolumeControl from "./audiocomponents/VolumeControl";
 import SongMetadata from "./audiocomponents/SongMetadata";
-import { pause, play } from "../../actions/audio/audio";
+import { pause, play, shuffle } from "../../actions/audio/audio";
 
 import { connect, useDispatch, useSelector } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
@@ -32,6 +32,7 @@ type AudioPlayerProps = {
   currentSongIndex: number;
   currentPlaylist: string;
   isShuffled: boolean;
+  isNewSongSelected: boolean;
 };
 
 function AudioPlayer({
@@ -42,6 +43,7 @@ function AudioPlayer({
   currentSongIndex,
   currentPlaylist,
   isShuffled,
+  isNewSongSelected,
 }: AudioPlayerProps) {
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
 
@@ -50,24 +52,40 @@ function AudioPlayer({
     filtered = filteredSongs.filter(
       (song) => song.playlists && song.playlists.includes(currentPlaylist)
     );
-    let filteredShuffle = filtered;
+    console.log("UNSHUFFLED", filtered);
+    let filteredShuffle = [...filtered];
+    console.log(isShuffled);
     if (isShuffled) {
-      for (let i = filteredShuffle.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [filteredShuffle[i], filteredShuffle[j]] = [
-          filteredShuffle[j],
-          filteredShuffle[i],
-        ];
+      // Find index of current song
+
+      // Remove current song from array
+      filteredShuffle.splice(currentSongIndex, 1);
+      // Shuffle remaining songs
+      filteredShuffle.sort(() => Math.random() - 0.5);
+      //console.log(currentSongIndex);
+      //console.log(filtered.length - 1);
+      if (currentSongIndex === filtered.length) {
+        filteredShuffle.unshift(filtered[filtered.length - 1]);
+      } else {
+        filteredShuffle.unshift(filtered[currentSongIndex]);
       }
-      console.log(filteredShuffle);
+      dispatch(setCurrentSongIndex(0));
+
       setFiltered(filteredShuffle);
+
+      console.log("SHUFFLED SONGS", filteredShuffle);
+      if (currentSong == "") {
+        filteredShuffle.sort(() => Math.random() - 0.5);
+        const firstSong = filteredShuffle[0];
+        dispatch(setCurrentSong(firstSong.filePath));
+        play();
+        dispatch(setCurrentSongIndex(0));
+      }
     } else {
       setFiltered(filtered);
     }
-
-    console.log(currentPlaylist);
-  }, [currentPlaylist, filteredSongs, isShuffled]);
-  console.log(filtered);
+  }, [currentPlaylist, filteredSongs, isShuffled, isNewSongSelected]);
+  // console.log(filtered);
   // console.log(currentSong);
   // console.log("Filtered songs: ", filteredSongs);
   const storedVolume = localStorage.getItem("volume");
@@ -87,21 +105,22 @@ function AudioPlayer({
       audioElement.src = `media-loader://${currentSong}`;
       audioElement.volume = defaultVolume;
       audioElement.play();
-
       let previousSongIndex = currentSongIndex - 1;
       let nextSongIndex = currentSongIndex + 1;
-
       //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
 
       if (nextSongIndex >= filtered.length) {
         console.log(nextSongIndex);
         nextSongIndex = 0;
-        dispatch(setCurrentSongIndex(-1));
+        dispatch(setNextSong(filtered[nextSongIndex].filePath));
+        // dispatch(setCurrentSongIndex(-1));
       }
       if (currentSongIndex == 0) {
         previousSongIndex = 0;
       }
-
+      if (currentSongIndex == filtered.length) {
+        dispatch(setCurrentSongIndex(0));
+      }
       console.log(
         previousSongIndex +
           " - Previous Index " +
@@ -119,7 +138,7 @@ function AudioPlayer({
     } else {
       audioElement.src = ""; // Set the src to an empty string
     }
-  }, [currentSong]);
+  }, [currentSong, currentSongIndex, isShuffled, isNewSongSelected]);
   return (
     <div className="audio-player">
       <audio id="audio-element" />
@@ -139,6 +158,7 @@ function mapStateToProps(state: AppState) {
     currentSongIndex: state.audio.currentSongIndex,
     currentPlaylist: state.audio.currentPlaylist,
     isShuffled: state.audio.isShuffled,
+    isNewSongSelected: state.audio.isNewSongSelected,
   };
 }
 

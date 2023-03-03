@@ -8,6 +8,7 @@ import { SetVolumeAction } from "../../../types/audio/SetVolumeAction";
 import {
   SetCurrentSong,
   SetCurrentSongIndex,
+  SetNewSong,
   SetNextSong,
   SetPreviousSong,
 } from "../../../types/audio/SetSong";
@@ -27,6 +28,7 @@ const initialState: AudioState = {
   playlists: [{ id: "Library", name: "Library" }],
   deletedPlaylist: "",
   isShuffled: false,
+  isNewSongSelected: false,
 };
 
 export default (
@@ -43,6 +45,7 @@ export default (
     | SetCurrentPlaylistAction
     | SetPlaylists
     | SetDeletedPlaylist
+    | SetNewSong
 ) => {
   switch (action.type) {
     case "PLAY":
@@ -56,6 +59,7 @@ export default (
         isPlaying: false,
       };
     case "SHUFFLE":
+      console.log("Shuffled");
       return {
         ...state,
         isShuffled: !state.isShuffled,
@@ -81,6 +85,12 @@ export default (
       return {
         ...state,
         currentSong: action.payload.currentSong,
+        isNewSongSelected: false,
+      };
+    case "SET_NEW_SONG":
+      return {
+        ...state,
+        isNewSongSelected: true,
       };
     case "SET_CURRENT_SONG_INDEX":
       //     console.log("Current song index: ", action.payload.currentSongIndex);
@@ -89,7 +99,7 @@ export default (
         currentSongIndex: action.payload.currentSongIndex,
       };
     case "SET_NEXT_SONG":
-      //    console.log("Next song: ", action.payload.nextSong);
+      console.log("Next song: ", action.payload.nextSong);
       return {
         ...state,
         nextSong: action.payload.nextSong,

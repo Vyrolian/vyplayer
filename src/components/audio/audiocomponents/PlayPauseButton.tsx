@@ -80,7 +80,7 @@ function PlayPauseButton({
   const handlePrevious = () => {
     if (storeProgress < 10 && currentSong != previousSong) {
       dispatch(setCurrentSong(previousSong));
-      // dispatch(setCurrentSongIndex(currentSongIndex - 1));
+      dispatch(setCurrentSongIndex(currentSongIndex - 1));
     } else {
       dispatch(updateSongProgress(0));
       audioElement.currentTime = 0;

@@ -4,6 +4,7 @@ import { connect, useDispatch } from "react-redux";
 import {
   setCurrentSong,
   setCurrentSongIndex,
+  setNewSong,
 } from "../../actions/audio/setSong";
 import { Data, FilteredSongs } from "../../../types/songMetadata";
 import { AppState } from "../../../types/AppState";
@@ -49,6 +50,7 @@ const CurrentPlaylist = ({
   function handleSelectSong(index: number) {
     dispatch(setCurrentSongIndex(index));
     dispatch(setCurrentSong(filtered[index].filePath));
+    dispatch(setNewSong());
   }
 
   const [data1, setData] = useState<{
