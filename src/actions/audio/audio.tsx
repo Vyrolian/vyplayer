@@ -2,6 +2,7 @@ import {
   PlayAction,
   PauseAction,
   ShuffleAction,
+  NextAction,
 } from "../../../types/audio/audio";
 const audioElement = document.getElementById(
   "audio-element"
@@ -17,6 +18,11 @@ export function pause(): PauseAction {
   console.log("pause action called");
   return {
     type: "PAUSE",
+  };
+}
+export function next(): NextAction {
+  return {
+    type: "NEXT",
   };
 }
 export function shuffle(): ShuffleAction {

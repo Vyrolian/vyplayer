@@ -28,6 +28,7 @@ export type AudioState = {
   deletedPlaylist: string;
   isShuffled: boolean;
   isNewSongSelected: boolean;
+  nextSongIndex: number;
 };
 
 export type PlaylistState = {

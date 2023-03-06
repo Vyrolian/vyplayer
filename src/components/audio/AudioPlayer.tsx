@@ -16,6 +16,7 @@ import {
   setCurrentSong,
   setCurrentSongIndex,
   setNextSong,
+  setNextSongIndex,
   setPreviousSong,
 } from "../../actions/audio/setSong";
 
@@ -33,6 +34,7 @@ type AudioPlayerProps = {
   currentPlaylist: string;
   isShuffled: boolean;
   isNewSongSelected: boolean;
+  nextSongIndex: number;
 };
 
 function AudioPlayer({
@@ -44,8 +46,10 @@ function AudioPlayer({
   currentPlaylist,
   isShuffled,
   isNewSongSelected,
+  nextSongIndex,
 }: AudioPlayerProps) {
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
+  let previousSongIndex = currentSongIndex - 1;
 
   useEffect(() => {
     let filtered;
@@ -69,8 +73,9 @@ function AudioPlayer({
       } else {
         filteredShuffle.unshift(filtered[currentSongIndex]);
       }
-      dispatch(setCurrentSongIndex(0));
-
+      //  dispatch(setCurrentSongIndex(0));
+      dispatch(setNextSongIndex(1));
+      dispatch(setNextSong(filtered[1].filePath));
       setFiltered(filteredShuffle);
 
       console.log("SHUFFLED SONGS", filteredShuffle);
@@ -102,17 +107,16 @@ function AudioPlayer({
   useEffect(() => {
     if (!audioElement) return;
     if (currentSong) {
-      audioElement.src = `media-loader://${currentSong}`;
+      audioElement.src = `media-loader://${filtered[currentSongIndex].filePath}`;
       audioElement.volume = defaultVolume;
       audioElement.play();
-      let previousSongIndex = currentSongIndex - 1;
-      let nextSongIndex = currentSongIndex + 1;
+
       //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
 
       if (nextSongIndex >= filtered.length) {
         console.log(nextSongIndex);
         nextSongIndex = 0;
-        dispatch(setNextSong(filtered[nextSongIndex].filePath));
+        //   dispatch(setNextSong(filtered[currentSongIndex + 1].filePath));
         // dispatch(setCurrentSongIndex(-1));
       }
       if (currentSongIndex == 0) {
@@ -159,6 +163,7 @@ function mapStateToProps(state: AppState) {
     currentPlaylist: state.audio.currentPlaylist,
     isShuffled: state.audio.isShuffled,
     isNewSongSelected: state.audio.isNewSongSelected,
+    nextSongIndex: state.audio.nextSongIndex,
   };
 }
 

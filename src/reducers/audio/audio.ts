@@ -15,6 +15,7 @@ import {
 import { SetCurrentPlaylistAction } from "../../../types/playlist/SetCurrentPlaylistAction";
 import { Playlist, SetPlaylists } from "../../../types/playlist/SetPlaylists";
 import { SetDeletedPlaylist } from "../../../types/playlist/SetDeletedPlaylist";
+let currentSongIndex = 0;
 const initialState: AudioState = {
   isPlaying: false,
   progress: 0,
@@ -23,12 +24,13 @@ const initialState: AudioState = {
   currentSong: "",
   previousSong: "",
   currentTrack: {},
-  currentSongIndex: 0,
+  currentSongIndex: currentSongIndex,
   currentPlaylist: "Library",
   playlists: [{ id: "Library", name: "Library" }],
   deletedPlaylist: "",
   isShuffled: false,
   isNewSongSelected: false,
+  nextSongIndex: currentSongIndex + 1,
 };
 
 export default (
@@ -57,6 +59,13 @@ export default (
       return {
         ...state,
         isPlaying: false,
+      };
+    case "NEXT":
+      console.log(currentSongIndex);
+      return {
+        ...state,
+        currentSongIndex: state.nextSongIndex,
+        nextSongIndex: state.nextSongIndex + 1,
       };
     case "SHUFFLE":
       console.log("Shuffled");
@@ -97,6 +106,7 @@ export default (
       return {
         ...state,
         currentSongIndex: action.payload.currentSongIndex,
+        nextSongIndex: action.payload.currentSongIndex + 1,
       };
     case "SET_NEXT_SONG":
       console.log("Next song: ", action.payload.nextSong);

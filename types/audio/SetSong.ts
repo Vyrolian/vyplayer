@@ -16,6 +16,12 @@ export interface SetNextSong {
     nextSong: string;
   };
 }
+export interface SetNextSongIndex {
+  type: "SET_NEXT_SONG_INDEX";
+  payload: {
+    nextSongIndex: number;
+  };
+}
 export interface SetPreviousSong {
   type: "SET_PREVIOUS_SONG";
   payload: {

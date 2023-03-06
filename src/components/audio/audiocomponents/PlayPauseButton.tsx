@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { AppState } from "../../../../types/AppState";
-import { play, pause, shuffle } from "../../../actions/audio/audio";
+import { play, pause, shuffle, next } from "../../../actions/audio/audio";
 import "./PlayPauseButton.css";
 import { updateSongProgress } from "../../../actions/audio/updateSongProgress";
 
 import {
   setCurrentSong,
   setCurrentSongIndex,
+  setNextSong,
 } from "../../../actions/audio/setSong";
 
 // import { progress } from "../../../constants/audio/audioProgress";
@@ -17,6 +18,7 @@ type PlayPauseButtonProps = {
   play: typeof play;
   pause: typeof pause;
   shuffle: typeof shuffle;
+  next: typeof next;
   audioElement: HTMLAudioElement;
   nextSong: string;
   previousSong: string;
@@ -29,6 +31,7 @@ function PlayPauseButton({
   isPlaying,
   play,
   pause,
+  next,
   shuffle,
   audioElement,
   isShuffled,
@@ -61,16 +64,10 @@ function PlayPauseButton({
       play();
     }
   };
-  const handleShuffle = () => {
-    shuffle();
-    console.log("SHUFFLED", isShuffled);
-  };
+
   // console.log(isPlaying);
   //console.log(progress);
-  const handleNext = () => {
-    dispatch(setCurrentSongIndex(currentSongIndex + 1));
-    dispatch(setCurrentSong(nextSong));
-  };
+
   if (audioElement)
     audioElement.onended = () => {
       console.log(nextSong);
@@ -94,10 +91,10 @@ function PlayPauseButton({
       <button onClick={handleClick} className="button">
         {isPlaying ? "Pause" : "Play"}
       </button>
-      <button onClick={handleNext} className="button">
+      <button onClick={next} className="button">
         {"Next"}
       </button>
-      <button onClick={handleShuffle} className="button">
+      <button onClick={shuffle} className="button">
         {"Shuffle"}
       </button>
     </div>
@@ -116,6 +113,7 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = {
   play,
   pause,
+  next,
   shuffle,
 };
 

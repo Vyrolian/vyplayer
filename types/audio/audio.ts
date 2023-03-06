@@ -6,8 +6,11 @@ export type PauseAction = {
   type: "PAUSE";
 };
 
+export type NextAction = {
+  type: "NEXT";
+};
 export type ShuffleAction = {
   type: "SHUFFLE";
 };
 
-export type AudioAction = PlayAction | PauseAction | ShuffleAction;
+export type AudioAction = PlayAction | PauseAction | NextAction | ShuffleAction;
