@@ -3,7 +3,7 @@ import PlayPauseButton from "./audiocomponents/PlayPauseButton";
 import ProgressBar from "./audiocomponents/ProgressBar";
 import VolumeControl from "./audiocomponents/VolumeControl";
 import SongMetadata from "./audiocomponents/SongMetadata";
-import { pause, play, shuffle } from "../../actions/audio/audio";
+import { next, pause, play, shuffle } from "../../actions/audio/audio";
 
 import { connect, useDispatch, useSelector } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
@@ -22,6 +22,7 @@ import {
 
 import { filteredByCurrentPlaylist } from "../functions/playlist/filteredByCurrentPlaylist";
 import { audioElement } from "../../constants/audio/audioElement";
+import { setPlaylistLength } from "../../actions/playlist/setPlaylistLength";
 
 //import test from "./test.mp3";
 type AudioPlayerProps = {
@@ -52,14 +53,13 @@ function AudioPlayer({
   let previousSongIndex = currentSongIndex - 1;
 
   useEffect(() => {
-    let filtered;
-    filtered = filteredSongs.filter(
+    let filtered = filteredSongs.filter(
       (song) => song.playlists && song.playlists.includes(currentPlaylist)
     );
     console.log("UNSHUFFLED", filtered);
     let filteredShuffle = [...filtered];
     console.log(isShuffled);
-    if (isShuffled) {
+    if (isShuffled === true) {
       // Find index of current song
 
       // Remove current song from array
@@ -73,9 +73,9 @@ function AudioPlayer({
       } else {
         filteredShuffle.unshift(filtered[currentSongIndex]);
       }
-      //  dispatch(setCurrentSongIndex(0));
-      dispatch(setNextSongIndex(1));
-      dispatch(setNextSong(filtered[1].filePath));
+      // dispatch(setCurrentSongIndex(0));
+      console.log(filteredShuffle[1].filePath);
+      dispatch(setNextSong(filteredShuffle[1].filePath));
       setFiltered(filteredShuffle);
 
       console.log("SHUFFLED SONGS", filteredShuffle);
@@ -89,7 +89,10 @@ function AudioPlayer({
     } else {
       setFiltered(filtered);
     }
+    dispatch(setPlaylistLength(filtered.length));
+    console.log("ASS", filteredSongs);
   }, [currentPlaylist, filteredSongs, isShuffled, isNewSongSelected]);
+
   // console.log(filtered);
   // console.log(currentSong);
   // console.log("Filtered songs: ", filteredSongs);
@@ -103,46 +106,43 @@ function AudioPlayer({
   const audioElement = document.getElementById(
     "audio-element"
   ) as HTMLAudioElement;
+  useEffect(() => {
+    //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
+    console.log(filtered.length);
 
+    if (currentSongIndex == 0) {
+      previousSongIndex = 0;
+    }
+    if (currentSongIndex == filtered.length) {
+      dispatch(setCurrentSongIndex(0));
+    }
+    console.log(
+      previousSongIndex +
+        " - Previous Index " +
+        currentSongIndex +
+        " - Current Index " +
+        nextSongIndex +
+        " - Next Index "
+    );
+    if (previousSongIndex >= 0 && previousSongIndex < filtered.length) {
+      dispatch(setPreviousSong(filtered[previousSongIndex].filePath));
+      //
+    }
+    if (nextSongIndex != filtered.length && filtered.length > 0) {
+      dispatch(setNextSong(filtered[nextSongIndex].filePath));
+    }
+    play();
+  }, [currentSongIndex, isShuffled, isNewSongSelected]);
   useEffect(() => {
     if (!audioElement) return;
-    if (currentSong) {
-      audioElement.src = `media-loader://${filtered[currentSongIndex].filePath}`;
-      audioElement.volume = defaultVolume;
-      audioElement.play();
-
-      //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
-
-      if (nextSongIndex >= filtered.length) {
-        console.log(nextSongIndex);
-        nextSongIndex = 0;
-        //   dispatch(setNextSong(filtered[currentSongIndex + 1].filePath));
-        // dispatch(setCurrentSongIndex(-1));
-      }
-      if (currentSongIndex == 0) {
-        previousSongIndex = 0;
-      }
-      if (currentSongIndex == filtered.length) {
-        dispatch(setCurrentSongIndex(0));
-      }
-      console.log(
-        previousSongIndex +
-          " - Previous Index " +
-          currentSongIndex +
-          " - Current Index " +
-          nextSongIndex +
-          " - Next Index "
-      );
-      if (previousSongIndex >= 0 && previousSongIndex < filtered.length) {
-        dispatch(setPreviousSong(filtered[previousSongIndex].filePath));
-        dispatch(setNextSong(filtered[nextSongIndex].filePath));
-      }
-
-      play();
-    } else {
-      audioElement.src = ""; // Set the src to an empty string
-    }
-  }, [currentSong, currentSongIndex, isShuffled, isNewSongSelected]);
+    console.log("CURRENT SONG INDEX", currentSongIndex);
+    console.log(currentSong);
+    if (currentSong) audioElement.src = `media-loader://${currentSong}`;
+    audioElement.volume = defaultVolume;
+    audioElement.play();
+    play();
+    dispatch(setCurrentSong(filtered[currentSongIndex].filePath));
+  }, [currentSongIndex, currentSong]);
   return (
     <div className="audio-player">
       <audio id="audio-element" />

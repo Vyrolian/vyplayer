@@ -9,6 +9,7 @@ import {
   setCurrentSong,
   setCurrentSongIndex,
   setNextSong,
+  setNextSongIndex,
 } from "../../../actions/audio/setSong";
 
 // import { progress } from "../../../constants/audio/audioProgress";
@@ -49,14 +50,16 @@ function PlayPauseButton({
     } else {
       audioElement.pause();
     }
+    if (isShuffled) dispatch(setNextSongIndex(1));
     const updateProgress = () => {
       const progress =
         (audioElement?.currentTime / audioElement?.duration) * 100;
       dispatch(updateSongProgress(progress));
     };
+    console.log("ASSSSS", isShuffled);
     audioElement.addEventListener("timeupdate", updateProgress);
     return () => audioElement.removeEventListener("timeupdate", updateProgress);
-  }, [isPlaying, dispatch, audioElement]);
+  }, [isPlaying, dispatch, audioElement, isShuffled]);
   const handleClick = () => {
     if (isPlaying) {
       pause();
@@ -83,6 +86,13 @@ function PlayPauseButton({
       audioElement.currentTime = 0;
     }
   };
+  const handleNext = () => {
+    next();
+    dispatch(setCurrentSong(nextSong));
+  };
+  const handleShuffle = () => {
+    shuffle();
+  };
   return (
     <div className="container">
       <button onClick={handlePrevious} className="button">
@@ -91,10 +101,10 @@ function PlayPauseButton({
       <button onClick={handleClick} className="button">
         {isPlaying ? "Pause" : "Play"}
       </button>
-      <button onClick={next} className="button">
+      <button onClick={handleNext} className="button">
         {"Next"}
       </button>
-      <button onClick={shuffle} className="button">
+      <button onClick={handleShuffle} className="button">
         {"Shuffle"}
       </button>
     </div>

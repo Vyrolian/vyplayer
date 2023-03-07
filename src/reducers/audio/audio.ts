@@ -10,11 +10,14 @@ import {
   SetCurrentSongIndex,
   SetNewSong,
   SetNextSong,
+  SetNextSongIndex,
   SetPreviousSong,
 } from "../../../types/audio/SetSong";
 import { SetCurrentPlaylistAction } from "../../../types/playlist/SetCurrentPlaylistAction";
 import { Playlist, SetPlaylists } from "../../../types/playlist/SetPlaylists";
 import { SetDeletedPlaylist } from "../../../types/playlist/SetDeletedPlaylist";
+import { setNextSongIndex } from "../../actions/audio/setSong";
+import { SetPlaylistLength } from "../../../types/playlist/SetPlaylistLength";
 let currentSongIndex = 0;
 const initialState: AudioState = {
   isPlaying: false,
@@ -31,6 +34,7 @@ const initialState: AudioState = {
   isShuffled: false,
   isNewSongSelected: false,
   nextSongIndex: currentSongIndex + 1,
+  playlistLength: 0,
 };
 
 export default (
@@ -48,6 +52,8 @@ export default (
     | SetPlaylists
     | SetDeletedPlaylist
     | SetNewSong
+    | SetNextSongIndex
+    | SetPlaylistLength
 ) => {
   switch (action.type) {
     case "PLAY":
@@ -60,13 +66,23 @@ export default (
         ...state,
         isPlaying: false,
       };
+
     case "NEXT":
-      console.log(currentSongIndex);
-      return {
-        ...state,
-        currentSongIndex: state.nextSongIndex,
-        nextSongIndex: state.nextSongIndex + 1,
-      };
+      if (state.nextSongIndex + 1 >= state.playlistLength) {
+        // Reached the end of the playlist, reset the nextSongIndex to 0
+        return {
+          ...state,
+          currentSongIndex: state.nextSongIndex,
+          nextSongIndex: 0,
+        };
+      } else {
+        // Not at the end of the playlist, increment the nextSongIndex
+        return {
+          ...state,
+          currentSongIndex: state.nextSongIndex,
+          nextSongIndex: state.nextSongIndex + 1,
+        };
+      }
     case "SHUFFLE":
       console.log("Shuffled");
       return {
@@ -89,6 +105,12 @@ export default (
         ...state,
         progress: action.payload.progress,
       };
+    case "SET_PLAYLIST_LENGTH":
+      console.log("PlaylistLength", state.playlistLength);
+      return {
+        ...state,
+        playlistLength: action.payload.playlistLength,
+      };
     case "SET_CURRENT_SONG":
       //    console.log("Current song: ", action.payload.currentSong);
       return {
@@ -102,11 +124,26 @@ export default (
         isNewSongSelected: true,
       };
     case "SET_CURRENT_SONG_INDEX":
-      //     console.log("Current song index: ", action.payload.currentSongIndex);
+      if (action.payload.currentSongIndex + 1 >= state.playlistLength) {
+        // Reached the end of the playlist, reset the nextSongIndex to 0
+        return {
+          ...state,
+          currentSongIndex: action.payload.currentSongIndex,
+          nextSongIndex: 0,
+        };
+      } else {
+        // Not at the end of the playlist, increment the nextSongIndex
+        return {
+          ...state,
+          currentSongIndex: action.payload.currentSongIndex,
+          nextSongIndex: action.payload.currentSongIndex + 1,
+        };
+      }
+    case "SET_NEXT_SONG_INDEX":
+      console.log("Next song index:", action.payload.nextSongIndex);
       return {
         ...state,
-        currentSongIndex: action.payload.currentSongIndex,
-        nextSongIndex: action.payload.currentSongIndex + 1,
+        nextSongIndex: action.payload.nextSongIndex,
       };
     case "SET_NEXT_SONG":
       console.log("Next song: ", action.payload.nextSong);

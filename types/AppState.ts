@@ -29,6 +29,7 @@ export type AudioState = {
   isShuffled: boolean;
   isNewSongSelected: boolean;
   nextSongIndex: number;
+  playlistLength: number;
 };
 
 export type PlaylistState = {
