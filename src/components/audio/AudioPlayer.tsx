@@ -66,8 +66,7 @@ function AudioPlayer({
       filteredShuffle.splice(currentSongIndex, 1);
       // Shuffle remaining songs
       filteredShuffle.sort(() => Math.random() - 0.5);
-      //console.log(currentSongIndex);
-      //console.log(filtered.length - 1);
+
       if (currentSongIndex === filtered.length) {
         filteredShuffle.unshift(filtered[filtered.length - 1]);
       } else {
