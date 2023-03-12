@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { AppState } from "../../../../types/AppState";
 import { Data } from "../../../../types/songMetadata";
+import "./SongMetadata.css";
 type SongMetadata = {
   data1: Data;
   currentSong: string;
@@ -23,7 +24,7 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
   //console.log(picture);
   // console.log(currentSongData?.songData.album);
   return (
-    <div>
+    <div className="song-metadata">
       {currentSongTitle ? (
         <div>
           <img

@@ -94,7 +94,7 @@ function PlayPauseButton({
     shuffle();
   };
   return (
-    <div className="container">
+    <div className="playpausebutton-container">
       <button onClick={handlePrevious} className="button">
         {"Previous"}
       </button>
