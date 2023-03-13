@@ -2,11 +2,28 @@
   display: flex;
   justify-content: center;
 }
-.button {
-  background-color: rgb(250, 10, 122);
+.playpausebutton-ellipse {
+  border-radius: 50%; /* Make the container an ellipse */
+  overflow: hidden; /* Clip the SVG icon to the ellipse shape */
+  width: 70px;
+  height: 70px;
+  background-color: transparent; /* Set the background color to transparent */
+  display: flex;
+  justify-content: center;
+  border: 2px solid white; /* Add a 2px solid black border */
+}
+.play-icon {
+  margin-left: 5px;
+  width: 40px;
+  height: 40px;
+}
+.playpausebutton {
+  background: none;
   border: none;
-  color: rgb(255, 255, 255);
-  padding: 15px 32px;
+  padding: 0;
+  cursor: pointer;
+}
+.button {
   text-align: center;
   text-decoration: none;
   display: inline-block;
