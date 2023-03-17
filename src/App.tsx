@@ -45,9 +45,8 @@ function App() {
     });
   }
   useEffect(() => {
-    setData((prevData) => ({
-      ...prevData,
-      songs: prevData.songs.map((song) => ({
+    setData(({ songs }) => ({
+      songs: songs.map((song) => ({
         ...song,
         playlists: song.playlists.filter((playlist) =>
           playlists.some((storePlaylist) => storePlaylist.id === playlist)

@@ -245,6 +245,7 @@ function mapStateToProps(state: AppState) {
     currentPlaylist: state.audio.currentPlaylist,
     playlists: state.audio.playlists,
     deletedPlaylist: state.audio.deletedPlaylist,
+    isShuffled: state.audio.isShuffled,
   };
 }
 export default connect(mapStateToProps, null)(CurrentPlaylist);

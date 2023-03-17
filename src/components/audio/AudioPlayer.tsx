@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PlayPauseButton from "./audiocomponents/PlayPauseButton";
 import ProgressBar from "./audiocomponents/ProgressBar";
 import VolumeControl from "./audiocomponents/VolumeControl";
@@ -23,6 +23,7 @@ import {
 import { filteredByCurrentPlaylist } from "../functions/playlist/filteredByCurrentPlaylist";
 import { audioElement } from "../../constants/audio/audioElement";
 import { setPlaylistLength } from "../../actions/playlist/setPlaylistLength";
+import audio from "../../reducers/audio/audio";
 
 //import test from "./test.mp3";
 type AudioPlayerProps = {
@@ -102,9 +103,7 @@ function AudioPlayer({
     : (defaultVolume = 0.1);
 
   const dispatch = useDispatch();
-  const audioElement = document.getElementById(
-    "audio-element"
-  ) as HTMLAudioElement;
+  const audioElement = useRef<HTMLAudioElement>(null);
   useEffect(() => {
     //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
     console.log(filtered.length);
@@ -133,21 +132,30 @@ function AudioPlayer({
     play();
   }, [currentSongIndex, isShuffled, isNewSongSelected]);
   useEffect(() => {
-    if (!audioElement) return;
-    console.log("CURRENT SONG INDEX", currentSongIndex);
-    console.log(currentSong);
-    if (currentSong) audioElement.src = `media-loader://${currentSong}`;
-    audioElement.volume = defaultVolume;
-    audioElement.play();
-    play();
-    dispatch(setCurrentSong(filtered[currentSongIndex].filePath));
-  }, [currentSongIndex, currentSong]);
+    if (audioElement.current) {
+      console.log("CURRENT SONG INDEX", currentSongIndex);
+      console.log(currentSong);
+      if (currentSong)
+        audioElement.current.src = `media-loader://${currentSong}`;
+      audioElement.current.volume = defaultVolume;
+      audioElement.current.play();
+      play();
+
+      if (
+        filtered.length > 0 &&
+        currentSongIndex >= 0 &&
+        currentSongIndex < filtered.length
+      ) {
+        dispatch(setCurrentSong(filtered[currentSongIndex].filePath));
+      }
+    }
+  }, [currentSongIndex, currentSong, filtered]);
   return (
     <div className="audio-player">
-      <audio id="audio-element" />
+      <audio ref={audioElement} />
       <PlayPauseButton audioElement={audioElement} />
-      <ProgressBar />
-      <VolumeControl defaultValue={defaultVolume} />
+      <ProgressBar audioElement={audioElement} />
+      <VolumeControl defaultValue={defaultVolume} audioElement={audioElement} />
     </div>
   );
 }

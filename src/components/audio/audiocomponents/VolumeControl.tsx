@@ -6,18 +6,23 @@ import { setVolume } from "../../../actions/audio/SetVolume";
 import "./VolumeControl.css";
 
 type VolumeControlProps = {
-  setVolume: typeof setVolume;
+  setVolume: (
+    volume: number,
+    audioElement: React.RefObject<HTMLAudioElement>
+  ) => void;
   defaultValue: number;
   volume: number;
+  audioElement: React.RefObject<HTMLAudioElement>;
 };
 
 function VolumeControl({
   setVolume,
   defaultValue,
   volume,
+  audioElement,
 }: VolumeControlProps) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(event.target.valueAsNumber);
+    setVolume(event.target.valueAsNumber, audioElement);
   };
   useEffect(() => {
     if (localStorage.getItem("volume") !== volume.toString()) {
