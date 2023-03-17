@@ -119,6 +119,7 @@ export default (
         isNewSongSelected: false,
       };
     case "SET_NEW_SONG":
+      console.log("assssssss");
       return {
         ...state,
         isNewSongSelected: true,

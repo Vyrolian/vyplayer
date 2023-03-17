@@ -49,6 +49,7 @@ const CurrentPlaylist = ({
 
   function handleSelectSong(index: number) {
     dispatch(setCurrentSongIndex(index));
+    console.log(filtered, "Current Playlist filtered");
     dispatch(setCurrentSong(filtered[index].filePath));
     dispatch(setNewSong());
   }

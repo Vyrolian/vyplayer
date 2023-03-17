@@ -51,7 +51,7 @@ function PlayPauseButton({
     } else {
       audioElement.current.pause();
     }
-    if (isShuffled) dispatch(setNextSongIndex(1));
+    // if (isShuffled) dispatch(setNextSongIndex(1));
     const updateProgress = () => {
       if (!audioElement.current) return;
       const progress =
@@ -119,7 +119,7 @@ function PlayPauseButton({
         {"Next"}
       </button>
       <button onClick={handleShuffle} className="button">
-        {"Shuffle"}
+        {isShuffled ? "Shuffled" : "Shuffle"}
       </button>
     </div>
   );
