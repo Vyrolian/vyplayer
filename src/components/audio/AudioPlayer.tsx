@@ -50,6 +50,7 @@ function AudioPlayer({
   isNewSongSelected,
   nextSongIndex,
 }: AudioPlayerProps) {
+  const dispatch = useDispatch();
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
   useEffect(() => {
     console.log(filtered);
@@ -63,35 +64,44 @@ function AudioPlayer({
     );
 
     if (isShuffled) {
-      let filteredShuffle = [...filtered];
-      filteredShuffle.splice(currentSongIndex, 1);
-      filteredShuffle.sort(() => Math.random() - 0.5);
-
-      if (currentSongIndex === filtered.length) {
-        filteredShuffle.unshift(filtered[filtered.length - 1]);
-      } else {
-        filteredShuffle.unshift(filtered[currentSongIndex]);
-      }
-      console.log("FILTERED SHUFFLE", filteredShuffle);
-      dispatch(setNextSong(filteredShuffle[1].filePath));
-
-      setFiltered(filteredShuffle);
+      let shuffledFiltered = shuffleArray(filtered, currentSongIndex);
+      setFiltered(shuffledFiltered);
       dispatch(setNextSongIndex(1));
-
-      // Add a check to prevent changing the song when shuffle is toggled
-      if (currentSong === "" && !isNewSongSelected) {
-        filteredShuffle.sort(() => Math.random() - 0.5);
-        const firstSong = filteredShuffle[0];
-        dispatch(setCurrentSong(firstSong.filePath));
-        play();
-        dispatch(setCurrentSongIndex(0));
-      }
     } else {
+      // Find the index of the current song in the filtered playlist
+      const currentSongInFilteredIndex = filtered.findIndex(
+        (song) => song.filePath === currentSong
+      );
+
       setFiltered(filtered);
+
+      // Set nextSongIndex based on the current song's index in the filtered playlist
+      if (currentSongInFilteredIndex !== -1) {
+        const nextSongIndexInFiltered =
+          (currentSongInFilteredIndex + 1) % filtered.length;
+        dispatch(setNextSongIndex(nextSongIndexInFiltered));
+      }
     }
 
     dispatch(setPlaylistLength(filtered.length));
-  }, [currentPlaylist, filteredSongs, isShuffled, isNewSongSelected]);
+  }, [currentPlaylist, filteredSongs, isShuffled]);
+
+  // Utility function to shuffle an array
+  function shuffleArray(array: any[], currentSongIndex: number) {
+    let newArr = [...array];
+    // Remove the current song from the array
+    newArr.splice(currentSongIndex, 1);
+
+    for (let i = newArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+
+    // Insert the current song at the beginning of the shuffled array
+    newArr.unshift(array[currentSongIndex]);
+    console.log(newArr, "asswecan");
+    return newArr;
+  }
 
   // console.log(filtered);
   // console.log(currentSong);
@@ -102,7 +112,6 @@ function AudioPlayer({
     ? (defaultVolume = parseFloat(storedVolume))
     : (defaultVolume = 0.1);
 
-  const dispatch = useDispatch();
   const audioElement = useRef<HTMLAudioElement>(null);
   useEffect(() => {
     //  dispatch(setCurrentSongIndex(currentSongIndex + 1));
@@ -132,11 +141,8 @@ function AudioPlayer({
     }
     play();
   }, [currentSongIndex, filtered]);
+
   useEffect(() => {
-    console.log(
-      filtered,
-      "ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
-    );
     if (audioElement.current) {
       console.log("CURRENT SONG INDEX", currentSongIndex);
       console.log(currentSong);
@@ -154,7 +160,7 @@ function AudioPlayer({
         dispatch(setCurrentSong(filtered[currentSongIndex].filePath));
       } */
     }
-  }, [currentSongIndex, currentSong, filtered]);
+  }, [currentSongIndex, currentSong]);
   return (
     <div className="audio-player">
       <audio ref={audioElement} />

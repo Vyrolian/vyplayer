@@ -1,28 +1,54 @@
 .playpausebutton-container {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 15px;
 }
+
 .playpausebutton-ellipse {
-  border-radius: 50%; /* Make the container an ellipse */
-  overflow: hidden; /* Clip the SVG icon to the ellipse shape */
-  width: 70px;
-  height: 70px;
-  background-color: transparent; /* Set the background color to transparent */
+  position: relative;
+  overflow: hidden;
+  width: 76px;
+  height: 76px;
   display: flex;
   justify-content: center;
-  border: 2px solid white; /* Add a 2px solid black border */
+  align-items: center;
 }
-.play-icon {
-  margin-left: 5px;
+
+.playpausebutton-ellipse::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 63px;
+  height: 63px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid white;
+  background-color: transparent;
+}
+
+.playpausebutton-ellipse.glow::before {
+  filter: drop-shadow(0px 0px 2px #ff2ec7) drop-shadow(0px 0px 0px #ff2ec7)
+    drop-shadow(0px 0px 0px #ff2ec7) drop-shadow(0px 0px 0px #ff2ec7);
+}
+
+.playpause-icon {
+  color: white;
+  margin-left: 0px;
   width: 40px;
   height: 40px;
 }
+
 .playpausebutton {
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+  z-index: 1;
 }
+
 .button {
   text-align: center;
   text-decoration: none;
@@ -30,4 +56,12 @@
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+}
+
+.button:hover {
+  color: #61dafb;
+  transition: color 0.3s;
 }

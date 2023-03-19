@@ -5,6 +5,7 @@ import { play, pause, shuffle, next } from "../../../actions/audio/audio";
 import "./PlayPauseButton.css";
 import { updateSongProgress } from "../../../actions/audio/updateSongProgress";
 import { ReactComponent as PlayIcon } from "../../../icons/Play.svg";
+import { ReactComponent as PauseIcon } from "../../../icons/Pause.svg";
 import { ReactComponent as PreviousIcon } from "../../../icons/Previous.svg";
 import {
   setCurrentSong,
@@ -106,12 +107,12 @@ function PlayPauseButton({
       <button onClick={handlePrevious} className="playpausebutton">
         {<PreviousIcon />}
       </button>
-      <div className="playpausebutton-ellipse">
+      <div className={`playpausebutton-ellipse${isPlaying ? " glow" : ""}`}>
         <button onClick={handleClick} className="playpausebutton">
           {isPlaying ? (
-            <PlayIcon className="play-icon" width="24" height="24" />
+            <PauseIcon className="playpause-icon" width="24" height="24" />
           ) : (
-            "Pause"
+            <PlayIcon className="playpause-icon" width="24" height="24" />
           )}
         </button>
       </div>

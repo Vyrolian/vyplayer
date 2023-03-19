@@ -52,16 +52,24 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
             onChange={(event) => setNewPlaylistName(event.target.value)}
           />
         </label>
-        <button type="submit">Create</button>
+        <button className="playlistmenu-button" type="submit">
+          Create
+        </button>
       </form>
       <ul>
         {playlists.map((playlist) => (
           <li key={playlist.id}>
-            <button onClick={() => handleSelectPlaylist(playlist.id)}>
+            <button
+              className="playlistmenu-button"
+              onClick={() => handleSelectPlaylist(playlist.id)}
+            >
               {playlist.name}
             </button>
             {playlist.name !== "Library" && (
-              <button onClick={() => deletePlaylist(playlist.id)}>
+              <button
+                className="playlistmenu-button delete-button"
+                onClick={() => deletePlaylist(playlist.id)}
+              >
                 Delete
               </button>
             )}
