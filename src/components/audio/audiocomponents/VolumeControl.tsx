@@ -1,4 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, {
+  ChangeEvent,
+  CSSProperties,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { connect } from "react-redux";
 import { AppState } from "../../../../types/AppState";
@@ -14,7 +20,9 @@ type VolumeControlProps = {
   volume: number;
   audioElement: React.RefObject<HTMLAudioElement>;
 };
-
+interface InputStyle extends React.CSSProperties {
+  "--filled-width"?: string;
+}
 function VolumeControl({
   setVolume,
   defaultValue,
@@ -23,22 +31,31 @@ function VolumeControl({
 }: VolumeControlProps) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(event.target.valueAsNumber, audioElement);
+    const value = event.target.valueAsNumber;
+    console.log(value, "VALUE");
+    console.log(defaultValue);
+    event.target.style.setProperty("--filled-width", `${(value / 1) * 100}%`);
   };
+
   useEffect(() => {
     if (localStorage.getItem("volume") !== volume.toString()) {
       // Whenever the volume changes, update the value in local storage
       localStorage.setItem("volume", volume.toString());
     }
   }, [volume]);
+  const [filledWidth, setFilledWidth] = useState(`${(volume / 1) * 100}%`);
+  const inputStyle: InputStyle = { "--filled-width": filledWidth };
   return (
-    <div>
+    <div className="volume-control-container">
       <input
+        className="volume-control"
         type="range"
         min="0"
-        max="0.5"
+        max="1"
         step="0.01"
         onChange={handleChange}
         defaultValue={defaultValue}
+        style={inputStyle}
       />
     </div>
   );

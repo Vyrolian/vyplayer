@@ -5,3 +5,8 @@
   border-top: 1px solid #ccc;
   height: 100px;
 }
+.volume-control-wrapper {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}

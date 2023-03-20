@@ -37,6 +37,7 @@ type AudioPlayerProps = {
   isShuffled: boolean;
   isNewSongSelected: boolean;
   nextSongIndex: number;
+  isPlaying: boolean;
 };
 
 function AudioPlayer({
@@ -49,6 +50,7 @@ function AudioPlayer({
   isShuffled,
   isNewSongSelected,
   nextSongIndex,
+  isPlaying,
 }: AudioPlayerProps) {
   const dispatch = useDispatch();
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
@@ -139,7 +141,7 @@ function AudioPlayer({
       console.log(filtered);
       dispatch(setNextSong(filtered[nextSongIndex].filePath));
     }
-    play();
+    //play();
   }, [currentSongIndex, filtered]);
 
   useEffect(() => {
@@ -150,7 +152,8 @@ function AudioPlayer({
         audioElement.current.src = `media-loader://${currentSong}`;
       audioElement.current.volume = defaultVolume;
       audioElement.current.play();
-      play();
+
+      // play();
 
       /* if (
         filtered.length > 0 &&
@@ -166,7 +169,12 @@ function AudioPlayer({
       <audio ref={audioElement} />
       <PlayPauseButton audioElement={audioElement} />
       <ProgressBar audioElement={audioElement} />
-      <VolumeControl defaultValue={defaultVolume} audioElement={audioElement} />
+      <div className="volume-control-wrapper">
+        <VolumeControl
+          defaultValue={defaultVolume}
+          audioElement={audioElement}
+        />
+      </div>
     </div>
   );
 }
@@ -182,6 +190,7 @@ function mapStateToProps(state: AppState) {
     isShuffled: state.audio.isShuffled,
     isNewSongSelected: state.audio.isNewSongSelected,
     nextSongIndex: state.audio.nextSongIndex,
+    isPlaying: state.audio.isPlaying,
   };
 }
 

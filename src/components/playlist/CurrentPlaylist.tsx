@@ -16,12 +16,14 @@ import ContextMenu from "./ContextMenu";
 import { filteredSongs } from "../functions/playlist/sorting/filteredSongs";
 
 import { extractUniqueArtist } from "../functions/playlist/extract/extractUniqueArtist";
+import { play } from "../../actions/audio/audio";
 
 type CurrentPlaylist = {
   currentPlaylist: string;
   playlists: Playlist;
   filteredSongs: FilteredSongs;
   deletedPlaylist: string;
+  play: typeof play;
 };
 
 const CurrentPlaylist = ({
@@ -29,6 +31,7 @@ const CurrentPlaylist = ({
   playlists,
   filteredSongs,
   deletedPlaylist,
+  play,
 }: CurrentPlaylist) => {
   const [updatedFilteredSongs, setUpdatedFilteredSongs] =
     useState(filteredSongs);
@@ -52,6 +55,7 @@ const CurrentPlaylist = ({
     console.log(filtered, "Current Playlist filtered");
     dispatch(setCurrentSong(filtered[index].filePath));
     dispatch(setNewSong());
+    play();
   }
 
   const [data1, setData] = useState<{
@@ -249,4 +253,7 @@ function mapStateToProps(state: AppState) {
     isShuffled: state.audio.isShuffled,
   };
 }
-export default connect(mapStateToProps, null)(CurrentPlaylist);
+const mapDispatchToProps = {
+  play,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentPlaylist);

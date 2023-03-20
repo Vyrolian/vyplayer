@@ -7,6 +7,9 @@ import { updateSongProgress } from "../../../actions/audio/updateSongProgress";
 import { ReactComponent as PlayIcon } from "../../../icons/Play.svg";
 import { ReactComponent as PauseIcon } from "../../../icons/Pause.svg";
 import { ReactComponent as PreviousIcon } from "../../../icons/Previous.svg";
+import { ReactComponent as ShuffleIcon } from "../../../icons/Shuffle.svg";
+import { ReactComponent as RepeatIcon } from "../../../icons/Repeat.svg";
+import { ReactComponent as NextIcon } from "../../../icons/Next.svg";
 import {
   setCurrentSong,
   setCurrentSongIndex,
@@ -94,33 +97,40 @@ function PlayPauseButton({
         dispatch(updateSongProgress(0));
         audioElement.current.currentTime = 0;
       }
+    play();
   };
   const handleNext = () => {
     next();
     dispatch(setCurrentSong(nextSong));
+    play();
   };
   const handleShuffle = () => {
     shuffle();
   };
   return (
     <div className="playpausebutton-container">
-      <button onClick={handlePrevious} className="playpausebutton">
-        {<PreviousIcon />}
+      <button onClick={handleShuffle} className="button">
+        <ShuffleIcon className={`shuffle-icon${isShuffled ? " glow" : ""}`} />
       </button>
-      <div className={`playpausebutton-ellipse${isPlaying ? " glow" : ""}`}>
-        <button onClick={handleClick} className="playpausebutton">
-          {isPlaying ? (
-            <PauseIcon className="playpause-icon" width="24" height="24" />
-          ) : (
-            <PlayIcon className="playpause-icon" width="24" height="24" />
-          )}
+      <div className="center-controls">
+        <button onClick={handlePrevious} className="playpausebutton">
+          {<PreviousIcon className="previousnext-icon" />}
+        </button>
+        <div className={`playpausebutton-ellipse${isPlaying ? " glow" : ""}`}>
+          <button onClick={handleClick} className="playpausebutton">
+            {isPlaying ? (
+              <PauseIcon className="playpause-icon" />
+            ) : (
+              <PlayIcon className="playpause-icon play" />
+            )}
+          </button>
+        </div>
+        <button onClick={handleNext} className="playpausebutton">
+          {<NextIcon className="previousnext-icon" />}
         </button>
       </div>
       <button onClick={handleNext} className="button">
-        {"Next"}
-      </button>
-      <button onClick={handleShuffle} className="button">
-        {isShuffled ? "Shuffled" : "Shuffle"}
+        <RepeatIcon className={`shuffle-icon${isShuffled ? " glow" : ""}`} />
       </button>
     </div>
   );
