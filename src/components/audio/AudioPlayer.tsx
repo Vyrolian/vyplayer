@@ -9,8 +9,7 @@ import { connect, useDispatch, useSelector } from "react-redux";
 import { setVolume } from "../../actions/audio/SetVolume";
 import { AppState } from "../../../types/AppState";
 import { Data, FilteredSongs } from "../../../types/songMetadata";
-import { setUseProxies } from "immer";
-import { set } from "immer/dist/internal";
+
 import "./AudioPlayer.css";
 import {
   setCurrentSong,

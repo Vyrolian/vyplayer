@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { AppState } from "../../../../types/AppState";
 import { play, pause, shuffle, next } from "../../../actions/audio/audio";
@@ -104,13 +104,25 @@ function PlayPauseButton({
     dispatch(setCurrentSong(nextSong));
     play();
   };
+  const [shuffleClicked, setShuffleClicked] = useState(false);
   const handleShuffle = () => {
     shuffle();
+    setShuffleClicked(true);
   };
   return (
     <div className="playpausebutton-container">
       <button onClick={handleShuffle} className="button">
-        <ShuffleIcon className={`shuffle-icon${isShuffled ? " glow" : ""}`} />
+        <ShuffleIcon
+          className={`shuffle-icon${isShuffled ? " glow" : ""}`}
+          onMouseEnter={(e) => {
+            if (!isShuffled) {
+              e.currentTarget.classList.add("shuffle-hover");
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.classList.remove("shuffle-hover");
+          }}
+        />
       </button>
       <div className="center-controls">
         <button onClick={handlePrevious} className="playpausebutton">

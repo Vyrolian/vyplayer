@@ -43,7 +43,9 @@ function VolumeControl({
       localStorage.setItem("volume", volume.toString());
     }
   }, [volume]);
-  const [filledWidth, setFilledWidth] = useState(`${(volume / 1) * 100}%`);
+  const [filledWidth, setFilledWidth] = useState(
+    `${(defaultValue / 1) * 100}%`
+  );
   const inputStyle: InputStyle = { "--filled-width": filledWidth };
   return (
     <div className="volume-control-container">

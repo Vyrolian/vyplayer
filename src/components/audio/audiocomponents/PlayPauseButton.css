@@ -15,7 +15,6 @@
   overflow: hidden;
   width: 71px;
   height: 71px;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -63,14 +62,13 @@
   height: 30px;
   transition: filter 0.2s;
 }
-.shuffle-icon:hover {
-  width: 30px;
-  height: 30px;
+.shuffle-icon.shuffle-hover {
   filter: drop-shadow(0px 0px 3px #ff2ec7);
 }
 .shuffle-icon.glow {
   filter: drop-shadow(0px 0px 3px #ff2ec7);
 }
+
 .playpausebutton {
   background: none;
   border: none;
