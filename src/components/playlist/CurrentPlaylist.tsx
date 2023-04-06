@@ -1,5 +1,11 @@
 import { PictureType, ShortcutTags, Tags, TagType } from "jsmediatags/types";
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { connect, useDispatch } from "react-redux";
 import {
   setCurrentSong,
@@ -141,6 +147,7 @@ const CurrentPlaylist = ({
   });
   const [contextMenu, setContextMenu] = useState<SetContextMenu | null>(null);
   console.log(contextMenu);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
   function handleContextMenu(
     event: React.MouseEvent,
     index: number,
@@ -156,14 +163,12 @@ const CurrentPlaylist = ({
     });
     console.log(event.clientX);
   }
-  document.addEventListener("contextmenu", (event) => {
-    event.preventDefault();
 
-    // console.log(x);
-  });
-  function handleCloseContextMenu() {
+  const handleCloseContextMenu = useCallback(() => {
     setContextMenu(null);
-  }
+    console.log("ass");
+  }, []);
+
   useEffect(() => {
     console.log(filtered);
   }, [displayByArtist]);

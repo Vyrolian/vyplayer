@@ -78,15 +78,23 @@ function PlayPauseButton({
       play();
     }
   };
-
+  const [repeatOne, setRepeatOne] = useState(false);
   // console.log(isPlaying);
   //console.log(progress);
-
+  const handleRepeatOne = () => {
+    setRepeatOne((prevRepeatOne) => !prevRepeatOne);
+  };
   if (audioElement.current)
     audioElement.current.onended = () => {
-      console.log(nextSong);
-      dispatch(setCurrentSongIndex(currentSongIndex + 1));
-      dispatch(setCurrentSong(nextSong));
+      if (repeatOne && audioElement.current) {
+        // Repeat current song
+        audioElement.current.currentTime = 0;
+        audioElement.current.play();
+      } else {
+        // Play next song
+        dispatch(setCurrentSongIndex(currentSongIndex + 1));
+        dispatch(setCurrentSong(nextSong));
+      }
     };
   const handlePrevious = () => {
     if (audioElement.current)
@@ -141,8 +149,8 @@ function PlayPauseButton({
           {<NextIcon className="previousnext-icon" />}
         </button>
       </div>
-      <button onClick={handleNext} className="button">
-        <RepeatIcon className={`shuffle-icon${isShuffled ? " glow" : ""}`} />
+      <button onClick={handleRepeatOne} className="button">
+        <RepeatIcon className={`shuffle-icon${repeatOne ? " glow" : ""}`} />
       </button>
     </div>
   );

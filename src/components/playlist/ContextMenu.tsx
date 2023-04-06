@@ -1,5 +1,5 @@
 import { ShortcutTags } from "jsmediatags/types";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { AppState } from "../../../types/AppState";
 import { Playlist } from "../../../types/playlist/SetPlaylists";
@@ -35,6 +35,27 @@ const ContextMenu = ({
   currentPlaylist,
   onSongsRemoved,
 }: MenuProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  function useOutsideClick(
+    ref: React.RefObject<HTMLDivElement>,
+    callback: () => void
+  ) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (ref.current && !ref.current.contains(target)) {
+        callback();
+      }
+    };
+
+    useEffect(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+  useOutsideClick(ref, onClose);
+
   console.log("CONTEXTMENU ARTINS", artist);
   console.log("CONTEXTMENU ALBUM", album);
   interface OptionType {
@@ -109,6 +130,7 @@ const ContextMenu = ({
   }));
   return (
     <div
+      ref={ref}
       className="context-menu"
       style={{
         position: "absolute",
