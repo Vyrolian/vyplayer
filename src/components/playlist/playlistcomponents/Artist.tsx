@@ -8,7 +8,7 @@ import {
 } from "../../../actions/audio/setSong";
 import Album from "./Album";
 import Select from "react-select";
-import ContextMenu from "../ContextMenu";
+import ContextMenu from "../../contextmenu/ContextMenu";
 import { SetContextMenu } from "../../../../types/playlist/ContextMenu";
 import { extractAlbums } from "../../functions/playlist/extract/extractAlbums";
 

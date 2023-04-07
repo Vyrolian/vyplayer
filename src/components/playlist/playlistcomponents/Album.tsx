@@ -7,7 +7,7 @@ import {
   setCurrentSongIndex,
 } from "../../../actions/audio/setSong";
 
-import ContextMenu from "../ContextMenu";
+import ContextMenu from "../../contextmenu/ContextMenu";
 import { extractAlbums } from "../../functions/playlist/extract/extractAlbums";
 interface AlbumProps {
   album: string | undefined;

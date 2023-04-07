@@ -18,7 +18,7 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
       id: nanoid(),
       name: name,
     };
-
+    console.log("Current playlists:", playlists);
     dispatch(setPlaylists([...playlists, newPlaylist]));
   }
   const dispatch = useDispatch();

@@ -5,7 +5,10 @@ import { AppState } from "../../../types/AppState";
 import { Playlist } from "../../../types/playlist/SetPlaylists";
 import { Data } from "../../../types/songMetadata";
 import Select from "react-select";
-import CurrentPlaylist from "./CurrentPlaylist";
+import CurrentPlaylist from "../playlist/CurrentPlaylist";
+import outsideClickHandler from "../functions/contextmenu/useOutsideClick";
+import addSongsToPlaylist from "../functions/contextmenu/addSongsToPlaylist";
+
 type MenuProps = {
   x: number;
   y: number;
@@ -36,25 +39,12 @@ const ContextMenu = ({
   onSongsRemoved,
 }: MenuProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  function useOutsideClick(
-    ref: React.RefObject<HTMLDivElement>,
-    callback: () => void
-  ) {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (ref.current && !ref.current.contains(target)) {
-        callback();
-      }
+  useEffect(() => {
+    const removeListener = outsideClickHandler(ref, onClose);
+    return () => {
+      removeListener();
     };
-
-    useEffect(() => {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [ref]);
-  }
-  useOutsideClick(ref, onClose);
+  }, [ref, onClose]);
 
   console.log("CONTEXTMENU ARTINS", artist);
   console.log("CONTEXTMENU ALBUM", album);
@@ -91,36 +81,14 @@ const ContextMenu = ({
         );
       }
     });
-    console.log("asss");
     onSongsRemoved();
     onClose();
   }
   console.log(artist);
+
   function handleSelectChange(selectedOption: OptionType | null) {
     setSelectedPlaylist(selectedOption);
-    if (!selectedOption) {
-      return;
-    }
-    const playlistName = selectedOption.value;
-    let selectedSongs = [];
-    if (artist) {
-      selectedSongs = songs.filter(
-        (song) =>
-          song.songData.artist?.toLocaleLowerCase() === artist &&
-          (album ? song.songData.album === album : true)
-      );
-    } else if (album) {
-      selectedSongs = songs.filter((song) => song.songData.album == album);
-    } else {
-      selectedSongs = [songs[index]];
-    }
-    console.log("Selected songs ", selectedSongs);
-    selectedSongs.forEach((song) => {
-      const playlistExists = song.playlists.includes(playlistName);
-      if (!playlistExists) {
-        song.playlists.push(playlistName);
-      }
-    });
+    addSongsToPlaylist(selectedOption, songs, index, artist, album);
     onClose();
   }
   console.log(songs);

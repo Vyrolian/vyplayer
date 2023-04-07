@@ -80,13 +80,13 @@ function AudioPlayer({
       if (currentSongInFilteredIndex !== -1) {
         const nextSongIndexInFiltered =
           (currentSongInFilteredIndex + 1) % filtered.length;
+
         dispatch(setNextSongIndex(nextSongIndexInFiltered));
       }
     }
 
     dispatch(setPlaylistLength(filtered.length));
   }, [currentPlaylist, filteredSongs, isShuffled]);
-
   // Utility function to shuffle an array
   function shuffleArray(array: any[], currentSongIndex: number) {
     let newArr = [...array];
@@ -138,7 +138,11 @@ function AudioPlayer({
     }
     if (nextSongIndex != filtered.length && filtered.length > 0) {
       console.log(filtered);
-      dispatch(setNextSong(filtered[nextSongIndex].filePath));
+      if (filtered[nextSongIndex]) {
+        dispatch(setNextSong(filtered[nextSongIndex].filePath));
+      } else {
+        console.error("No song found at nextSongIndex:", nextSongIndex);
+      }
     }
     //play();
   }, [currentSongIndex, filtered]);

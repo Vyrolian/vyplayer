@@ -18,7 +18,7 @@ import Artist from "./playlistcomponents/Artist";
 import { Playlist } from "../../../types/playlist/SetPlaylists";
 import { SetContextMenu } from "../../../types/playlist/ContextMenu";
 import Select from "react-select";
-import ContextMenu from "./ContextMenu";
+import ContextMenu from "../contextmenu/ContextMenu";
 import { filteredSongs } from "../functions/playlist/sorting/filteredSongs";
 
 import { extractUniqueArtist } from "../functions/playlist/extract/extractUniqueArtist";
