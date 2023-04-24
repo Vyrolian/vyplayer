@@ -4,6 +4,13 @@ export interface SetCurrentSong {
     currentSong: string;
   };
 }
+export interface SetCurrentSongInfo {
+  type: "SET_CURRENT_SONG_INFO";
+  payload: {
+    currentSongTitle: string;
+    currentSongArtist: string;
+  };
+}
 export interface SetCurrentSongIndex {
   type: "SET_CURRENT_SONG_INDEX";
   payload: {

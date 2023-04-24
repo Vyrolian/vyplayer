@@ -10,14 +10,9 @@ import { connect, useDispatch } from "react-redux";
 import {
   setCurrentSong,
   setCurrentSongIndex,
-  setCurrentSongInfo,
   setNewSong,
 } from "../../actions/audio/setSong";
-import {
-  Data,
-  FilteredSongs,
-  ShortcutTagsDuration,
-} from "../../../types/songMetadata";
+import { Data, FilteredSongs } from "../../../types/songMetadata";
 import { AppState } from "../../../types/AppState";
 import Artist from "./playlistcomponents/Artist";
 import { Playlist } from "../../../types/playlist/SetPlaylists";
@@ -25,7 +20,7 @@ import { SetContextMenu } from "../../../types/playlist/ContextMenu";
 import Select from "react-select";
 import ContextMenu from "../contextmenu/ContextMenu";
 import { filteredSongs } from "../functions/playlist/sorting/filteredSongs";
-import "./CurrentPlaylist.css";
+
 import { extractUniqueArtist } from "../functions/playlist/extract/extractUniqueArtist";
 import { play } from "../../actions/audio/audio";
 
@@ -65,7 +60,6 @@ const CurrentPlaylist = ({
     dispatch(setCurrentSongIndex(index));
     console.log(filtered, "Current Playlist filtered");
     dispatch(setCurrentSong(filtered[index].filePath));
-
     dispatch(setNewSong());
     play();
   }
@@ -82,7 +76,7 @@ const CurrentPlaylist = ({
   }>();
   const [filtered, setFiltered] = useState<
     {
-      songData: ShortcutTagsDuration;
+      songData: ShortcutTags;
       filePath: string;
       playlists: string[];
     }[]
@@ -98,21 +92,18 @@ const CurrentPlaylist = ({
       window.localStorage.setItem("MY_APP_STATE", JSON.stringify(data));
       console.log("saved");
     }
-
     //   setFiltered(filtered);
   }, [data]);
   useEffect(() => {
     const storedData: Data = JSON.parse(
       window.localStorage.getItem("MY_APP_STATE") || "[]"
     );
-
     if (storedData !== null) setData(storedData);
     if (!data.songs?.length && storedData.albumArtworks) {
       data.songs = storedData.songs;
       data.albumArtworks = storedData.albumArtworks;
       console.log("check");
     }
-
     //console.log(data);
     //  console.log(storedData);
   }, []);
@@ -178,124 +169,79 @@ const CurrentPlaylist = ({
   useEffect(() => {
     console.log(filtered);
   }, [displayByArtist]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const filteredSongsI = filtered.filter((song) =>
-    [song.songData.artist, song.songData.title, song.songData.album].some(
-      (value) => value?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-  function formatDuration(durationInSeconds: any) {
-    const minutes = Math.floor(durationInSeconds / 60);
-    const seconds = Math.floor(durationInSeconds % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  }
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const [showSearch, setShowSearch] = useState(false);
-  useEffect(() => {
-    const handleKeyDown = (e: any) => {
-      if (e.ctrlKey && e.key === "f") {
-        setShowSearch(true);
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
-  function handleSearch(event: { key: string }) {
-    if (event.key === "Enter" || event.key === "Escape") {
-      setShowSearch(false);
-      setSearchTerm("");
-    }
-  }
   return (
-    <div style={{ width: "100%" }}>
-      <div className="playlist-header">
-        <img
-          className="playlist-image"
-          src={`media-loader://C:/test/Augment.jpeg`}
-          alt="playlist"
-        />
-        <div className="playlist-details">
-          {" "}
-          {/* Wrap the playlist name and number of tracks */}
-          <div className="playlist-name">{currentPlaylist}</div>
-          <div className="playlist-tracks">{filtered.length} tracks</div>{" "}
-          {/* Add the number of tracks */}
-        </div>
-        {showSearch && (
-          <input
-            ref={searchInputRef}
-            className="search-input"
-            type="text"
-            placeholder="Search..."
-            onChange={(e) => setSearchTerm(e.target.value)}
-            autoFocus
-            onKeyDown={handleSearch}
+    <div style={{ height: "1200px", overflowY: "auto" }}>
+      <div>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            index={contextMenu.index}
+            onClose={handleCloseContextMenu}
+            songs={filtered}
+            artist={contextMenu.artist}
+            onSongsRemoved={handleSongsRemoved}
           />
         )}
-      </div>
-      {contextMenu && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          index={contextMenu.index}
-          onClose={handleCloseContextMenu}
-          songs={filtered}
-          artist={contextMenu.artist}
-          onSongsRemoved={handleSongsRemoved}
-        />
-      )}
 
+        {/* rest of the component */}
+      </div>
       <button onClick={() => setDisplayByArtist((prevDisplay) => !prevDisplay)}>
         {displayByArtist ? "Display by songs" : "Display by artist"}
       </button>
       <div className="songs-container">
-        <table>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Artist</th>
-              <th>Title</th>
-              <th>Album</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered
-              .map((song, index) => ({ ...song, originalIndex: index }))
-              .filter(
+        {displayByArtist
+          ? //FILTERED BY ARTIST
+            artists.map((artist, index) => {
+              const artistSongs = filtered.filter(
                 (song) =>
-                  song.songData.artist
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) ||
-                  song.songData.title
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) ||
-                  song.songData.album
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-              )
-              .map((song) => (
-                <tr
-                  key={song.originalIndex}
+                  song.songData.artist?.toLowerCase().split("/")[0] === artist
+              );
+              console.log(artistSongs);
+              const artistStartIndex = startIndex;
+              startIndex += artistSongs.length;
+              return (
+                <div>
+                  <button
+                    onClick={(event) => handleContextMenu(event, index, artist)}
+                  >
+                    CONTEXTMENU
+                  </button>
+                  <Artist
+                    key={index}
+                    artist={artist}
+                    startIndex={artistStartIndex}
+                    artistSongs={artistSongs}
+                    filtered={filtered}
+                  />
+                </div>
+              );
+            })
+          : //FILTERED BY SONGS
+            filtered.map((song, index) => {
+              return (
+                <div
+                  key={index}
                   onContextMenu={(event) =>
-                    handleContextMenu(event, song.originalIndex, undefined)
+                    handleContextMenu(event, index, undefined)
                   }
-                  onClick={() => {
-                    handleSelectSong(song.originalIndex);
-                  }}
                 >
-                  <td>{song.originalIndex + 1}</td>
-                  <td>{song.songData.artist}</td>
-                  <td>{song.songData.title}</td>
-                  <td>{song.songData.album}</td>
-                  <td>{formatDuration(song.songData.duration)}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+                  <div className="song-details">
+                    {/* display the song details */}
+                    <div
+                      className="song-artist"
+                      key={index}
+                      onClick={() => {
+                        handleSelectSong(index);
+                      }}
+                    >
+                      {song.songData.artist} - {song.songData.title} -{" "}
+                      {song.songData.album}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
       </div>
     </div>
   );

@@ -2,11 +2,23 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border-top: 1px solid #ccc;
+
   height: 100px;
 }
 .volume-control-wrapper {
   position: absolute;
-  top: 15px;
+  top: 18px;
   right: 15px;
+}
+.song-info {
+  position: absolute;
+  left: 1%;
+  top: 9px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+}
+
+.song-image-container {
+  margin-right: 10px;
 }

@@ -1,18 +1,17 @@
 .volume-control {
   appearance: none;
   width: 100%;
-  height: 10px;
+  height: 6px;
+
   background: linear-gradient(
     to right,
     white 0%,
     white var(--filled-width, 0%),
-    rgba(71, 76, 82, 1) var(--filled-width, 0%),
-    rgba(71, 76, 82, 1) 100%
+    #272954 var(--filled-width, 0%),
+    #272954 100%
   );
   outline: none;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  border-radius: 5px;
+
   cursor: pointer;
 }
 
@@ -22,28 +21,30 @@
 
 .volume-control::-webkit-slider-thumb {
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   background: white;
   cursor: pointer;
   border-radius: 50%;
 }
 
-.volume-control::-moz-range-thumb {
+.volume-icon {
+  display: inline-block;
+
   width: 20px;
   height: 20px;
-  background: white;
-  cursor: pointer;
-  border-radius: 50%;
-}
-
-.volume-control::-moz-range-progress {
-  background-color: white;
-  height: 10px;
-  border-radius: 5px;
 }
 
 .volume-control-container {
+  display: flex;
+  align-items: center;
   width: 200px;
-  margin: 15px;
+  margin-right: 15px;
+  margin-top: 6px;
+}
+
+.input-wrapper {
+  flex-grow: 1;
+  margin-bottom: 3px;
+  margin-left: 10px;
 }

@@ -22,21 +22,20 @@ function SongMetadata({ data1, currentSong }: SongMetadata) {
     );
 
   //console.log(picture);
-  // console.log(currentSongData?.songData.album);
+  // console.log(currentSongData?.songData.album); width: "calc(100vw * ((var(--left-fixed-width) - 10) / 2560))",
   return (
     <div className="song-metadata">
       {currentSongTitle ? (
-        <div>
-          <img
-            src={`media-loader://C:/test/${picture}.jpeg`}
-            style={{
-              width: "150px",
-            }}
-          />
-          {currentSongData?.songData.artist} - {currentSongData?.songData.title}
-        </div>
+        <img
+          src={`media-loader://C:/test/${picture}.jpeg`}
+          style={{
+            width: "76px",
+            paddingLeft: "5px",
+            paddingBottom: "5px",
+          }}
+        />
       ) : (
-        <div>No title found</div>
+        <div></div>
       )}
     </div>
   );

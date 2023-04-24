@@ -8,6 +8,7 @@ import { SetVolumeAction } from "../../../types/audio/SetVolumeAction";
 import {
   SetCurrentSong,
   SetCurrentSongIndex,
+  SetCurrentSongInfo,
   SetNewSong,
   SetNextSong,
   SetNextSongIndex,
@@ -35,6 +36,8 @@ const initialState: AudioState = {
   isNewSongSelected: false,
   nextSongIndex: currentSongIndex + 1,
   playlistLength: 0,
+  currentSongTitle: "",
+  currentSongArtist: "",
 };
 
 export default (
@@ -54,6 +57,7 @@ export default (
     | SetNewSong
     | SetNextSongIndex
     | SetPlaylistLength
+    | SetCurrentSongInfo
 ) => {
   switch (action.type) {
     case "PLAY":
@@ -112,11 +116,20 @@ export default (
         playlistLength: action.payload.playlistLength,
       };
     case "SET_CURRENT_SONG":
-      //    console.log("Current song: ", action.payload.currentSong);
+      console.log("Current song: ", action.payload.currentSong);
       return {
         ...state,
         currentSong: action.payload.currentSong,
         isNewSongSelected: false,
+      };
+    case "SET_CURRENT_SONG_INFO":
+      console.log(
+        console.log("Current song title: ", action.payload.currentSongTitle)
+      );
+      return {
+        ...state,
+        currentSongTitle: action.payload.currentSongTitle,
+        currentSongArtist: action.payload.currentSongArtist,
       };
     case "SET_NEW_SONG":
       console.log("assssssss");

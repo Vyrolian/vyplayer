@@ -9,6 +9,7 @@ import React, {
 import { connect } from "react-redux";
 import { AppState } from "../../../../types/AppState";
 import { setVolume } from "../../../actions/audio/SetVolume";
+import { ReactComponent as VolumeIcon } from "../../../icons/Volume.svg";
 import "./VolumeControl.css";
 
 type VolumeControlProps = {
@@ -49,16 +50,19 @@ function VolumeControl({
   const inputStyle: InputStyle = { "--filled-width": filledWidth };
   return (
     <div className="volume-control-container">
-      <input
-        className="volume-control"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        onChange={handleChange}
-        defaultValue={defaultValue}
-        style={inputStyle}
-      />
+      <VolumeIcon className="volume-icon" />
+      <div className="input-wrapper">
+        <input
+          className="volume-control"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          onChange={handleChange}
+          defaultValue={defaultValue}
+          style={inputStyle}
+        />
+      </div>
     </div>
   );
 }

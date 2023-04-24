@@ -9,6 +9,8 @@ import SongMetadata from "./components/audio/audiocomponents/SongMetadata";
 import PlaylistMenu from "./components/playlist/menu/PlaylistMenu";
 import { filteredSongs } from "./components/functions/playlist/sorting/filteredSongs";
 import "./App.css";
+import localForage from "localforage";
+import "./custom-fonts.css";
 var jsmediatags = window.jsmediatags;
 
 //console.log(jsmediatags);
@@ -22,6 +24,15 @@ function App() {
     console.log("Not running in an Electron app.");
   }
   const [data, setData] = useState<Data>({ songs: [] });
+  /* useEffect(() => {
+    localForage.getItem("songs").then((storedSongs) => {
+      if (storedSongs) {
+        setData({ songs: storedSongs as any[] });
+      }
+    });
+
+  }, []);*/
+  localForage.clear();
   function handleOpenFile() {
     window.electronAPI.showOpenDialog();
 
@@ -54,8 +65,11 @@ function App() {
       })),
     }));
   }, []);
+  // localForage.clear();
   let filtered = filteredSongs(data);
-  // console.log(" F I L T E R E D ", filtered);
+
+  localForage.setItem("songs", data.songs);
+
   let src = "";
 
   return (
@@ -66,20 +80,15 @@ function App() {
             <button onClick={handleOpenFile}>Open Folder</button>
           </div>
 
-          <div className="song-metadata">
-            {data && <SongMetadata data1={data} />}
-          </div>
-          <div className="playlist-menu">
-            <PlaylistMenu />
-          </div>
-        </div>
-        <div className="bottom-fixed">
-          <div>
-            <AudioPlayer filteredSongs={filtered} />
-          </div>
+          <PlaylistMenu />
         </div>
         <div className="main-content">
           <CurrentPlaylist filteredSongs={filtered} />
+        </div>
+      </div>
+      <div className="bottom-fixed ">
+        <div>
+          <AudioPlayer filteredSongs={filtered} />
         </div>
       </div>
     </div>

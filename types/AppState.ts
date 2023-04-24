@@ -13,6 +13,8 @@ export type AppState = {
   playlists: AudioState;
   deletedPlaylist: AudioState;
   isShuffled: AudioState;
+  currentSongTitle: string;
+  currentSongArtist: string;
 };
 export type AudioState = {
   isPlaying: boolean;
@@ -30,6 +32,8 @@ export type AudioState = {
   isNewSongSelected: boolean;
   nextSongIndex: number;
   playlistLength: number;
+  currentSongTitle: string;
+  currentSongArtist: string;
 };
 
 export type PlaylistState = {

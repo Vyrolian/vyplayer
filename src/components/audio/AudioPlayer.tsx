@@ -14,6 +14,7 @@ import "./AudioPlayer.css";
 import {
   setCurrentSong,
   setCurrentSongIndex,
+  setCurrentSongInfo,
   setNextSong,
   setNextSongIndex,
   setPreviousSong,
@@ -37,6 +38,8 @@ type AudioPlayerProps = {
   isNewSongSelected: boolean;
   nextSongIndex: number;
   isPlaying: boolean;
+  currentSongTitle: string;
+  currentSongArtist: string;
 };
 
 function AudioPlayer({
@@ -50,6 +53,8 @@ function AudioPlayer({
   isNewSongSelected,
   nextSongIndex,
   isPlaying,
+  currentSongTitle,
+  currentSongArtist,
 }: AudioPlayerProps) {
   const dispatch = useDispatch();
   const [filtered, setFiltered] = useState<FilteredSongs>([]);
@@ -158,17 +163,47 @@ function AudioPlayer({
 
       // play();
 
-      /* if (
+      if (
         filtered.length > 0 &&
         currentSongIndex >= 0 &&
         currentSongIndex < filtered.length
       ) {
         dispatch(setCurrentSong(filtered[currentSongIndex].filePath));
-      } */
+        dispatch(
+          setCurrentSongInfo(
+            filtered[currentSongIndex]?.songData?.title || "Unknown Title",
+            filtered[currentSongIndex]?.songData?.artist || "Unknown Artist"
+          )
+        );
+      }
     }
   }, [currentSongIndex, currentSong]);
+  let currentSongData = filtered.find((song) => song.filePath === currentSong);
+
+  let picture;
+  if (currentSongData?.songData.album)
+    picture = currentSongData?.songData.album.replace(
+      /[<>:"\/\\|?*\x00-\x1F]/g,
+      "_"
+    );
   return (
     <div className="audio-player">
+      <div className="song-info">
+        <div className="song-image-container">
+          <img
+            src={`media-loader://C:/test/${picture}.jpeg`}
+            style={{
+              width: "63px",
+            }}
+          />
+        </div>
+        <div className="song-text-container">
+          <div className="song-title" style={{ color: "#4B52FB" }}>
+            {currentSongTitle}
+          </div>
+          <div className="song-artist">{currentSongArtist}</div>
+        </div>
+      </div>
       <audio ref={audioElement} />
       <PlayPauseButton audioElement={audioElement} />
       <ProgressBar audioElement={audioElement} />
@@ -194,6 +229,8 @@ function mapStateToProps(state: AppState) {
     isNewSongSelected: state.audio.isNewSongSelected,
     nextSongIndex: state.audio.nextSongIndex,
     isPlaying: state.audio.isPlaying,
+    currentSongTitle: state.audio.currentSongTitle,
+    currentSongArtist: state.audio.currentSongArtist,
   };
 }
 

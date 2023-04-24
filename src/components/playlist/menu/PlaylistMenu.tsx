@@ -45,10 +45,11 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
       <h1>Playlists</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          New Playlist:
           <input
+            className="playlist-menu-input"
             type="text"
             value={newPlaylistName}
+            placeholder="Enter playlist name"
             onChange={(event) => setNewPlaylistName(event.target.value)}
           />
         </label>
@@ -59,12 +60,9 @@ const PlaylistMenu = ({ playlists }: PlaylistMenu) => {
       <ul>
         {playlists.map((playlist) => (
           <li key={playlist.id}>
-            <button
-              className="playlistmenu-button"
-              onClick={() => handleSelectPlaylist(playlist.id)}
-            >
+            <span onClick={() => handleSelectPlaylist(playlist.id)}>
               {playlist.name}
-            </button>
+            </span>
             {playlist.name !== "Library" && (
               <button
                 className="playlistmenu-button delete-button"

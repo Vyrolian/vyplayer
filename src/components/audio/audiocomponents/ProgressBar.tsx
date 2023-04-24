@@ -38,14 +38,17 @@ function ProgressBar({ progress, audioElement }: ProgressBarProps) {
     : sec;
 
   return (
-    <div className="progress-containter">
+    <div className="progress-container">
+      <div className="progress-time-left">{currentTimeDisplay}</div>
       <div className="progress-bar" onClick={onProgressBarClick}>
-        <div className="progress" style={{ width: `${progress}%` }}></div>
+        <div className="progress" style={{ width: `${progress}%` }}>
+          <div
+            className="big-dot"
+            style={{ left: `calc(${progress}% - 8px)` }}
+          ></div>
+        </div>
       </div>
-      <div className="progress-time-container">
-        <div className="progress-time-left">{currentTimeDisplay}</div>
-        <div className="progress-time-right">{durationDisplay}</div>
-      </div>
+      <div className="progress-time-right">{durationDisplay}</div>
     </div>
   );
 }

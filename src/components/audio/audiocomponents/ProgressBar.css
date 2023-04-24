@@ -1,30 +1,40 @@
 .progress-container {
   display: flex;
-  margin: 0 auto; /* this will center the page */
-  width: 960px; /*  use your width here */
-  flex: 1;
-  padding: 0 1%;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 9px;
 }
-.progress-time-container {
-  display: flex;
-}
+
 .progress-time-left {
-  margin-left: 1%;
+  margin-left: 1%; /* Add margin to the left */
+  margin-right: 4px;
 }
+
 .progress-time-right {
-  margin-left: auto;
-  margin-right: 1%;
+  margin-left: 4px;
+  margin-right: 1%; /* Add margin to the right */
 }
+
 .progress-bar {
-  height: 10px;
+  height: 7px;
   width: 98%;
-  background-color: #888;
+  background: #272954;
   cursor: pointer;
   position: relative;
-  margin: 0 auto;
 }
 
 .progress {
   height: 100%;
-  background-color: #38d7ff;
+  background-color: white;
+}
+
+.big-dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  background-color: white;
+  border-radius: 50%;
 }

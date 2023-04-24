@@ -1,23 +1,29 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-
 .playlist-menu {
-  font-family: "Roboto", sans-serif;
-  border: 1px solid #444;
   margin-top: 10px;
   padding: 10px;
   border-radius: 5px;
-  max-width: 400px;
-  background-color: #333;
+  font-size: 20px;
+  background-color: #000000;
 }
 
 .playlist-menu h2 {
-  font-size: 1.2em;
   margin: 0;
   padding: 0 0 10px 0;
-  border-bottom: 1px solid #444;
   color: #f1f1f1;
 }
-
+.playlist-menu-input {
+  box-sizing: border-box;
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 23px;
+  padding-left: 5px; /* add this line */
+  color: white; /* add this line */
+}
 .playlist-menu ul {
   list-style: none;
   padding: 0;
@@ -47,19 +53,17 @@
   text-decoration: underline;
 }
 .playlistmenu-button {
-  background-color: #f1f1f1;
-  color: #333;
-  border: none;
-  border-radius: 3px;
-  padding: 6px 12px;
+  background: rgba(217, 217, 217, 0.2);
+  border-radius: 20px;
+  padding: 5px 10px; /* increase padding to make button bigger */
   font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  color: white;
   margin-right: 4px;
+  margin-top: 10px; /* add margin-top to add space from the top */
 }
 
 .playlistmenu-button:hover {
-  background-color: #ccc;
+  background-color: #636363;
 }
 
 .playlistmenu-button:focus {
