@@ -4,7 +4,7 @@ VyPlayer is a versatile and easy-to-use music player built with Electron and Rea
 
 ## Implemented Features
 
-- Clean and modern user interface (albeit very raw)
+- UI (albeit very raw)
 - Playlists
 - Playback control (play, pause, next, previous, shuffle, repeat)
 
